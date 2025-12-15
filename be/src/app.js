@@ -1,8 +1,15 @@
 import express from 'express';
 import cors from 'cors';
-// import authRoutes from './2_auth/routes/authRoutes.js';
+
+// 1. Import Swagger
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './1_config/swagger.js';
+
+import authRoutes from '../src/2_auth/5routes/authRoutes.js';
 
 const app = express();
+
+app.use(express.json());
 
 // Cấu hình CORS: Cho phép ai được gọi API
 // Khi lên Cloud, thay dấu '*' bằng tên miền Frontend (để bảo mật)
@@ -13,10 +20,10 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(express.json());
 
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Routes
-// app.use('/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
     res.json({ 
