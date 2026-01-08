@@ -20,9 +20,10 @@ export const createUser = async(user) => {
     const result = await pool.query(query, [username, password_hash, email, toNullIfEmpty(phone), toNullIfEmpty(dob), toNullIfEmpty(first_name), toNullIfEmpty(last_name)]);
     return result.rows[0];
 }
+
 // cho refreshTok
 export const findUserbyId = async(id) => {
-    const query = `SELECT id, username, email, phone, dob, first_name, last_name FROM users WHERE id = $1`;
+    const query = `SELECT id, username FROM users WHERE id = $1`;
     const result = await pool.query(query, [id]);
     return result.rows[0];
 }

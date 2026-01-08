@@ -21,6 +21,27 @@ export const handleRegister = async(req, res) => {
     }
 }
 
+export const handleLogin = async(req, res) => {
+    try {
+        const { user, accessToken, refreshToken } = await authService.loginService(req.body);
+
+        res.status(200).json({
+            message: "Đăng nhập thành công!",
+            data: {
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email
+                },
+                accessToken,
+                refreshToken
+            }
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
 export const refreshToken = async (req, res) => {
     try {
         const { refreshToken } = req.body;

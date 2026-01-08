@@ -72,7 +72,7 @@ export const handleRefreshToken = async (refreshToken) => {
         // Cập nhật tài khoản còn k
         const user = await findUserById(decoded.id);
         if (!user) 
-            throw new Error('User không tồn tại');
+            throw new Error('Tài khoản không tồn tại');
 
         // Cấp lại Access Token mới
         const newAccessToken = jwt.sign(
@@ -86,3 +86,27 @@ export const handleRefreshToken = async (refreshToken) => {
         throw new Error('Phiên đăng nhập hết hạn, vui lòng đăng nhập lại');
     }
 };
+
+export const loginService = async(data) => {
+    const {username, password} = data;
+
+    const user = await authModel.findUsers(username, username);
+    if (!user) 
+        throw new Error('Tài khoản không tồn tại');
+    
+    // so sánh pass
+    const validPass = await bcrypt.compare(password, user.password_hash);
+    if (!validPass)
+        throw new Error('Mật khẩu không chính xác');
+
+    const token = await genTok(user);
+
+    return { 
+        user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+        }, 
+        ...token
+    };
+}

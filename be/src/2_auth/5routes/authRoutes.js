@@ -1,6 +1,8 @@
 import express from 'express';
-import { handleRegister } from "../4controllers/authController.js";
-import { validRegister, registerRateLimit } from "../3middleware/authMiddleware.js";
+import { handleRegister, handleLogin } from "../4controllers/authController.js";
+import { validRegister, registerRateLimit, registerRateLimitDaily, 
+         validLogin, loginRateLimit
+} from "../3middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -73,6 +75,64 @@ const router = express.Router();
  *       429:
  *         description: Gửi quá nhiều yêu cầu (Rate Limit)
  */
-router.post('/register', registerRateLimit, validRegister, handleRegister);
+router.post('/register', registerRateLimit, registerRateLimitDaily, validRegister, handleRegister);
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Đăng nhập
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Username hoặc Email đều được
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Đăng nhập thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Đăng nhập thành công!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         username:
+ *                           type: string
+ *                         email:
+ *                           type: string
+ *                     accessToken:
+ *                       type: string
+ *                     refreshToken:
+ *                       type: string
+ *       400:
+ *         description: Thiếu thông tin đăng nhập (Validation error)
+ *       401:
+ *         description: Sai tài khoản hoặc mật khẩu
+ *       429:
+ *         description: Quá nhiều lần đăng nhập sai (Rate Limit)
+ */
+router.post('/login', loginRateLimit, validLogin, handleLogin);
 
 export default router;

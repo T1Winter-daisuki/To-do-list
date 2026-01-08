@@ -56,6 +56,46 @@ export const validRegister = (req, res, next) => {
 };
 
 export const registerRateLimit = rateLimit({
+    windowMs: 60 * 60* 1000,
+    max: 3,
+    message: { message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau 1 giờ.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+export const registerRateLimitDaily = rateLimit({
+    windowMs: 24 * 60 * 60* 1000,
+    max: 5,
+    message: { message: 'Bạn đã đạt giới hạn tạo tài khoản trong ngày.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+const loginSchema = Joi.object({
+    username: Joi.string().custom((value) => escape(value)).required().trim().messages({
+        'any.required': 'Vui lòng nhập tài khoản',
+        'string.empty': 'Tài khoản không được để trống'
+    }),
+    
+    password: Joi.string().required().messages({
+        'any.required': 'Vui lòng nhập mật khẩu',
+        'string.empty': 'Mật khẩu không được để trống'
+    })
+});
+
+export const validLogin = (req, res, next) => {
+    const { error, value } = loginSchema.validate(req.body);
+
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
+
+    req.body = value;
+
+    next();
+};
+
+export const loginRateLimit = rateLimit({
     windowMs: 30 * 1000,
     max: 5,
     message: { message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau 30 giây.' },
