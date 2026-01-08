@@ -28,12 +28,15 @@ export const registerService = async(data) => {
     const {username, password, email, phone, dob, first_name, last_name} = data;
 
     // ktra tồn tại
-    const userexist = await authModel.findUsers(username, email);
-    if (userexist) throw new Error ("Tài khoản hoặc email đã tồn tại");
+    const userExist = await authModel.checkExist('username', username);
+        if (userExist) throw new Error("Username đã tồn tại!");
+
+    const mailExist = await authModel.checkExist('email', email);
+        if (mailExist) throw new Error("Email đã được sử dụng!");
 
     if (phone) {
-        const phoneexist = await authModel.checkExist('phone', phone);
-        if (phoneexist) throw new Error("Số điện thoại đã tồn tại!");
+        const phoneExist = await authModel.checkExist('phone', phone);
+        if (phoneExist) throw new Error("Số điện thoại đã được sử dụng!");
     }
     
     // Hash pass
@@ -53,18 +56,20 @@ export const registerService = async(data) => {
 
 export const handleRefreshToken = async (refreshToken) => {
     if (!refreshToken) 
-        throw new Error('Chưa cung cấp Refresh Token');
+        throw new Error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
 
     try {
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const decoded = jwt.verify(
+            refreshToken, 
+            process.env.REFRESH_TOKEN_SECRET
+        );
 
-        //Check xem token này có nằm trong Redis không?
+        // Check xem token này có nằm trong Redis không?
         const storedToken = await redisClient.get(`refresh_token:${decoded.id}`);
-        
         if (!storedToken || refreshToken !== storedToken)
-            throw new Error('Refresh Token không hợp lệ hoặc đã đăng xuất');
+            throw new Error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
 
-        //Lấy thông tin User mới nhất từ DB
+        // Cập nhật tài khoản còn k
         const user = await findUserById(decoded.id);
         if (!user) 
             throw new Error('User không tồn tại');

@@ -19,6 +19,7 @@ const router = express.Router();
  *             required:
  *               - username
  *               - password
+ *               - passwordConfirm
  *               - email
  *             properties:
  *               username:
@@ -58,6 +59,11 @@ const router = express.Router();
  *                   properties:
  *                     user:
  *                       type: object
+ *                       properties:
+ *                          username:
+ *                              type: string
+ *                          email:
+ *                              type: string
  *                     accessToken:
  *                       type: string
  *                     refreshToken:

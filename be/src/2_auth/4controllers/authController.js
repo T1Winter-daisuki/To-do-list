@@ -6,18 +6,18 @@ export const handleRegister = async(req, res) => {
 
         res.status(201).json({ 
             message: "Đăng kí thành công!",
-            user: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                first_name: user.first_name,
-                last_name: user.last_name
-            },
-            accessToken,
-            refreshToken
+            data: {
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email
+                },
+                accessToken,
+                refreshToken
+            }
         });
     } catch (error) {
-        res.status(400).json({ message: error.message});
+        res.status(400).json({ message: error.message });
     }
 }
 

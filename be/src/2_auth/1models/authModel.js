@@ -1,5 +1,6 @@
 import pool from "../../1_config/db.js";
 
+// biến tất cả những cái "không nhập" (undefined, "") thành chuẩn NULL của SQL.
 const toNullIfEmpty = (value) => {
     return (value === '' || value === undefined) ? null : value;
 };
@@ -19,15 +20,16 @@ export const createUser = async(user) => {
     const result = await pool.query(query, [username, password_hash, email, toNullIfEmpty(phone), toNullIfEmpty(dob), toNullIfEmpty(first_name), toNullIfEmpty(last_name)]);
     return result.rows[0];
 }
-
-export const findUsers = async(username, email) => {
-    const query = `SELECT * FROM users WHERE username = $1 OR email = $2`;
-    const result = await pool.query(query, [username, email]);
+// cho refreshTok
+export const findUserbyId = async(id) => {
+    const query = `SELECT id, username, email, phone, dob, first_name, last_name FROM users WHERE id = $1`;
+    const result = await pool.query(query, [id]);
     return result.rows[0];
 }
 
-export const findUserbyId = async(username, id) => {
-    const query = `SELECT id, username, email, phone, dob, first_name, last_name FROM users WHERE id = $1`;
-    const result = await pool.query(query, [id]);
+// cho 1st login
+export const findUsers = async(username, email) => {
+    const query = `SELECT * FROM users WHERE username = $1 OR email = $2`;
+    const result = await pool.query(query, [username, email]);
     return result.rows[0];
 }
