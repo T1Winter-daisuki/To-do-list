@@ -1,0 +1,182 @@
+/* Import font chữ hiện đại, bo tròn nhẹ */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+
+.container {
+    /* Background Gradient pha trộn giữa Xanh xám và Be */
+    background: linear-gradient(135deg, #C5C7BC 0%, #DEDED1 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Quicksand', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Thêm mấy hình tròn trang trí bay bay phía sau cho đỡ trống */
+.container::before, .container::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    z-index: 0;
+    opacity: 0.6;
+}
+
+.container::before {
+    width: 300px;
+    height: 300px;
+    background: #FBF3D1;
+    top: -50px;
+    left: -50px;
+    animation: float 6s ease-in-out infinite;
+}
+
+.container::after {
+    width: 200px;
+    height: 200px;
+    background: #B6AE9F;
+    bottom: -30px;
+    right: -30px;
+    animation: float 8s ease-in-out infinite reverse;
+}
+
+/* Cái hộp Form chính */
+.box {
+    background: rgba(255, 255, 255, 0.9); /* Màu trắng đục để nổi bật trên nền */
+    padding: 40px 50px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(182, 174, 159, 0.4); /* Bóng màu nâu nhạt */
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    z-index: 1; /* Nổi lên trên mấy hình tròn */
+    
+    /* Hiệu ứng xuất hiện */
+    animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border: 1px solid #fff;
+}
+
+.box h2 {
+    color: #5D574F; /* Màu chữ đậm hơn màu chủ đạo một chút cho dễ đọc */
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 1px;
+}
+
+/* Các ô nhập liệu */
+.inputGroup {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.inputGroup label {
+    display: block;
+    margin-bottom: 8px;
+    color: #888277;
+    font-weight: 600;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.inputGroup input {
+    width: 100%;
+    padding: 14px 15px;
+    border: 2px solid #DEDED1; /* Viền màu be */
+    background-color: #FBF3D1; /* Nền input màu kem nhạt */
+    border-radius: 12px;
+    font-size: 15px;
+    color: #555;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+/* Hiệu ứng khi bấm vào ô input */
+.inputGroup input:focus {
+    border-color: #B6AE9F; /* Đổi màu viền sang nâu */
+    background-color: #fff;
+    transform: translateY(-2px); /* Nhảy nhẹ lên */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.inputGroup input:focus + label {
+    color: #B6AE9F;
+}
+
+/* Nút bấm */
+.btnLogin {
+    width: 100%;
+    padding: 15px;
+    background-color: #B6AE9F;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(182, 174, 159, 0.4);
+}
+
+.btnLogin:hover {
+    background-color: #9E9689; /* Màu tối hơn chút khi hover */
+    transform: translateY(-3px); /* Bay lên */
+    box-shadow: 0 8px 20px rgba(182, 174, 159, 0.6);
+}
+
+.btnLogin:active {
+    transform: scale(0.98);
+}
+
+/* Link đăng ký */
+.box div:last-child {
+    font-size: 14px;
+    color: #888;
+}
+
+.box a {
+    color: #B6AE9F;
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 5px;
+    position: relative;
+}
+
+/* Gạch chân chạy chạy khi hover link */
+.box a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: #B6AE9F;
+    transition: width 0.3s;
+}
+
+.box a:hover::after {
+    width: 100%;
+}
+
+/* --- ANIMATIONS --- */
+
+/* Hiệu ứng trượt từ dưới lên lúc mới vào */
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hiệu ứng bay bổng cho mấy hình nền */
+@keyframes float {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(15px, 20px); }
+    100% { transform: translate(0, 0); }
+}
