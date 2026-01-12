@@ -57,7 +57,7 @@ export const validRegister = (req, res, next) => {
 
 export const registerRateLimit = rateLimit({
     windowMs: 60 * 60* 1000,
-    max: 3,
+    max: 30,
     message: { message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau 1 giờ.' },
     standardHeaders: true,
     legacyHeaders: false,
@@ -69,6 +69,7 @@ export const registerRateLimitDaily = rateLimit({
     message: { message: 'Bạn đã đạt giới hạn tạo tài khoản trong ngày.' },
     standardHeaders: true,
     legacyHeaders: false,
+    skipFailedRequests: true,
 });
 
 const loginSchema = Joi.object({

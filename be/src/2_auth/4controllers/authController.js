@@ -12,8 +12,7 @@ export const handleRegister = async(req, res) => {
                     username: user.username,
                     email: user.email
                 },
-                accessToken,
-                refreshToken
+                accessToken
             }
         });
     } catch (error) {
@@ -33,8 +32,7 @@ export const handleLogin = async(req, res) => {
                     username: user.username,
                     email: user.email
                 },
-                accessToken,
-                refreshToken
+                accessToken
             }
         });
     } catch (error) {
