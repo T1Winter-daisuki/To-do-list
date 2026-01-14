@@ -10,11 +10,9 @@ const PrivateRoute = ({ children }) => {
     if (loading) return <div>Đang tải...</div>;
 
     // 2. Nếu kiểm tra xong mà không có user (chưa đăng nhập) -> Đá về Login
-    if (!user) {
-        return <Navigate to="/login" />;
-    }
+    if (!user) return <Navigate to="/login" />;
 
-    // 3. Nếu có user -> Cho phép hiển thị nội dung bên trong (HomePage)
+    // 3. Nếu có user -> Cho phép hiển thị nội dung bên trong
     return children;
 };
 
