@@ -1,0 +1,137 @@
+/* Container Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 5%;
+  /* Màu nền #DEDED1 pha trong suốt */
+  background: rgba(222, 222, 209, 0.9); 
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* Logo Style */
+.logo {
+  text-decoration: none;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #B6AE9F; /* Màu chủ đạo đậm */
+  display: flex;
+  cursor: pointer;
+}
+.logo span {
+  display: inline-block;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+.logo:hover span { color: #C5C7BC; /* Hover đổi sang màu rêu */ }
+.logo span:nth-child(odd):hover { transform: translateY(-5px); }
+.logo span:nth-child(even):hover { transform: translateY(5px); }
+
+/* Menu Desktop */
+.navlist {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+  align-items: center;
+}
+
+.navlist a {
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #928b7d; /* Màu chữ hơi đậm hơn B6AE9F một chút để dễ đọc */
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.navlist a:hover {
+  color: #B6AE9F;
+  background-color: #FBF3D1; /* Hover ra màu sáng nhất */
+}
+
+.navlist a.active {
+  color: #FBF3D1; /* Chữ màu sáng */
+  background-color: #B6AE9F; /* Nền màu đậm */
+  box-shadow: 0 4px 15px rgba(182, 174, 159, 0.3);
+}
+
+/* User Area & Button */
+.loginBtn {
+  text-decoration: none;
+  font-weight: bold;
+  color: #B6AE9F;
+  border: 2px solid #B6AE9F;
+  padding: 8px 20px;
+  border-radius: 20px;
+  transition: 0.3s;
+}
+.loginBtn:hover {
+  background: #B6AE9F;
+  color: #FBF3D1;
+}
+
+.userContainer {
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  cursor: pointer; 
+  position: relative;
+}
+.avatarCircle {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  /* Gradient từ màu Rêu sang màu Nâu xám */
+  background: linear-gradient(135deg, #C5C7BC, #B6AE9F);
+  display: flex; justify-content: center; align-items: center;
+  color: #FBF3D1; font-weight: bold;
+}
+.dropdown {
+  position: absolute; top: 120%; right: 0;
+  background: #FBF3D1; width: 200px;
+  border-radius: 12px; padding: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  display: flex; flex-direction: column;
+}
+
+/* Mobile Icon */
+.menuIcon { display: none; font-size: 28px; color: #B6AE9F; cursor: pointer; }
+.mobileUserArea { display: none; }
+
+/* RESPONSIVE */
+@media (max-width: 1480px){
+  .header{ padding: 12px 2.5%; transition: 0.1s; }
+}
+
+@media (max-width: 840px){
+  .menuIcon { display: block; }
+  .userAreaDesktop { display: none; }
+  .mobileUserArea {
+      display: block; margin-top: 20px; padding-top: 20px;
+      border-top: 1px solid rgba(182, 174, 159, 0.3);
+  }
+  .navlist {
+      position: absolute; top: 100%; right: 0; left: 0;
+      display: flex; flex-direction: column; text-align: center;
+      background: rgba(182, 174, 159, 0.95); /* Nền menu mobile màu đậm */
+      backdrop-filter: blur(20px);
+      padding: 30px;
+      transition: all 0.5s ease;
+      transform: translateX(-100%);
+      height: 100vh;
+      align-items: center; justify-content: flex-start;
+  }
+  .navlist.open { transform: translateX(0); }
+  .navlist a {
+      display: block; margin: 15px 0; font-size: 20px;
+      color: #FBF3D1; /* Chữ màu sáng trên nền tối */
+      width: 100%;
+  }
+  .navlist a:hover, .navlist a.active {
+      color: #FBF3D1; background: rgba(255,255,255,0.2);
+  }
+}

@@ -1,0 +1,128 @@
+.homeContainer {
+    position: relative;
+    width: 100%;
+    min-height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Background gradient nhẹ nhàng */
+.backgroundAnimation {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+    /* Gradient từ Vàng kem sang Xám kem */
+    background: linear-gradient(135deg, #FBF3D1 0%, #DEDED1 100%);
+}
+
+/* Các hình khối trôi nổi dùng màu của bộ palette */
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px); /* Tăng độ mờ cho ảo diệu */
+    opacity: 0.7;
+    animation: float 10s infinite alternate;
+}
+
+.shape:nth-child(1) {
+    width: 300px; height: 300px;
+    background: #C5C7BC; /* Màu rêu */
+    top: 10%; left: 10%;
+    animation-delay: 0s;
+}
+
+.shape:nth-child(2) {
+    width: 400px; height: 400px;
+    background: #B6AE9F; /* Màu nâu xám */
+    bottom: 10%; right: 10%;
+    animation-delay: -5s;
+}
+
+.shape:nth-child(3) {
+    width: 200px; height: 200px;
+    background: #ffffff; /* Trắng để tạo điểm sáng */
+    top: 40%; left: 40%;
+    animation-duration: 7s;
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(20px, 40px) rotate(20deg); }
+}
+
+/* TEXT CONTENT */
+.heroSection {
+    text-align: center;
+    z-index: 1;
+    padding: 0 20px;
+    max-width: 800px;
+}
+
+.title {
+    font-size: 3.5rem;
+    color: #5a554e; /* Màu chữ đậm hơn #B6AE9F một chút để đọc tốt trên nền sáng */
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.highlight {
+    /* Gradient chữ dùng 2 màu đậm nhất */
+    background: linear-gradient(to right, #B6AE9F, #9e968b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+.description {
+    font-size: 1.2rem;
+    color: #7a756c; /* Màu xám đất */
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.ctaGroup {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 15px 40px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.primaryBtn {
+    background: #B6AE9F;
+    color: #FBF3D1;
+    box-shadow: 0 10px 20px rgba(182, 174, 159, 0.4);
+}
+
+.secondaryBtn {
+    background: transparent;
+    color: #B6AE9F;
+    border: 2px solid #B6AE9F;
+}
+
+.btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+}
+.primaryBtn:hover {
+    background: #a39b8d;
+}
+.secondaryBtn:hover {
+    background: #B6AE9F;
+    color: #FBF3D1;
+}
+
+@media (max-width: 840px) {
+    .title { font-size: 2.5rem; }
+    .description { font-size: 1rem; }
+    .ctaGroup { flex-direction: column; }
+}

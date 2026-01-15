@@ -1,0 +1,30 @@
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 15%; 
+    flex-wrap: wrap;
+    gap: 2rem;
+    /* Dùng màu đậm nhất làm nền */
+    background: #B6AE9F;
+    border-top: 1px solid #C5C7BC; 
+    margin-top: auto; 
+}
+
+.footerContent p {
+    color: #FBF3D1; /* Chữ màu sáng nhất */
+    font-size: 16px; 
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-align: center;
+    margin: 0;
+}
+
+.footerContent span {
+    color: #ffffff; 
+    font-weight: 800;
+}
+
+@media (max-width: 1480px){
+    .footer { padding: 20px 3%; }
+}

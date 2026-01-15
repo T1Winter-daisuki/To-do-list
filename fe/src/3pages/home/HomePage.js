@@ -1,37 +1,35 @@
 import React from 'react';
-import { useAuth } from '../../2context/AuthContext'; 
+import { Link } from 'react-router-dom';
+import styles from './HomePage.module.css';
 
 const HomePage = () => {
-    // Lấy user và hàm logout từ "kho" Context
-    const { user, logout } = useAuth();
-
     return (
-        <div style={{ textAlign: 'center', marginTop: '50px' }}>
-            <h1>🏡 Trang Chủ</h1>
-            
-            {/* Kiểm tra nếu có user thì hiện tên, không thì hiện khách */}
-            {user ? (
-                <div>
-                    <h2>Xin chào, <span style={{color: 'blue'}}>{user.username}</span>! 👋</h2>
-                    <p>Email: {user.email}</p>
-                    
-                    <button 
-                        onClick={logout}
-                        style={{
-                            padding: '10px 20px',
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        Đăng xuất
-                    </button>
+        <div className={styles.homeContainer}>
+            <div className={styles.backgroundAnimation}>
+                <div className={styles.shape}></div>
+                <div className={styles.shape}></div>
+                <div className={styles.shape}></div>
+            </div>
+
+            <section className={styles.heroSection}>
+                <h1 className={styles.title}>
+                    Quản lý công việc <br /> 
+                    <span className={styles.highlight}>Hiệu quả & Đơn giản</span>
+                </h1>
+                <p className={styles.description}>
+                    Chào mừng đến với To-Do List. 
+                    Một công cụ giúp bạn tổ chức cuộc sống, theo dõi tâm trạng và hoàn thành mục tiêu mỗi ngày.
+                </p>
+                
+                <div className={styles.ctaGroup}>
+                    <Link to="/todo" className={`${styles.btn} ${styles.primaryBtn}`}>
+                        Bắt đầu ngay
+                    </Link>
+                    <Link to="/how" className={`${styles.btn} ${styles.secondaryBtn}`}>
+                        Xem hướng dẫn
+                    </Link>
                 </div>
-            ) : (
-                <p>Đang tải thông tin...</p>
-            )}
+            </section>
         </div>
     );
 };

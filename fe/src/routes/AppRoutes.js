@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import PrivateRoute from './PrivateRoute';
 import LoginPage from '../3pages/auth/LoginPage';
@@ -9,13 +9,26 @@ import HomePage from '../3pages/home/HomePage';
 const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/home" replace />} />
+      <Route path="/home" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/about" element={<div style={{padding: 50}}>About Page (Coming Soon)</div>} />
+      <Route path="/how" element={<div style={{padding: 50}}>How to use (Coming Soon)</div>} />
       
       <Route 
-        path="/" element={
+        path="/todo" 
+        element={
           <PrivateRoute>
-             <HomePage />
+             <div style={{padding: 50}}>Todo (Coming Soon)</div>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/mood" 
+        element={
+          <PrivateRoute>
+             <div style={{padding: 50}}>Mood Tracker (Coming Soon)</div>
           </PrivateRoute>
         } 
       />
