@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './1_config/swagger.js';
 
 import authRoutes from '../src/2_auth/5routes/authRoutes.js';
+import taskRoutes from '../src/3_tasks/5routes/taskRoutes.js';
 
 const app = express();
 
@@ -23,7 +24,8 @@ app.use(cors(corsOptions));
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Routes
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
 
 app.get('/', (req, res) => {
     res.json({ 

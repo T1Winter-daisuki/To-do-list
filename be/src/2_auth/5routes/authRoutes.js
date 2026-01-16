@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /auth/register:
+ * /api/auth/register:
  *   post:
  *     summary: Đăng ký tài khoản mới
  *     tags: [Auth]
@@ -79,7 +79,7 @@ router.post('/register', registerRateLimit, registerRateLimitDaily, validRegiste
 
 /**
  * @swagger
- * /auth/login:
+ * /api/auth/login:
  *   post:
  *     summary: Đăng nhập
  *     tags: [Auth]

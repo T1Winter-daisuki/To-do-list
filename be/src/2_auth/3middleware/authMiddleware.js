@@ -1,6 +1,10 @@
 import Joi from "joi";
 import escape from "escape-html";
 import rateLimit from 'express-rate-limit';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const signupSchema = Joi.object({
     username: Joi.string().custom((value) => escape(value)).alphanum().min(4).max(30).required().trim().messages({
@@ -103,3 +107,22 @@ export const loginRateLimit = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
 });
+
+export const verifyToken = (req, res, next) => {
+    const authHeader = req.header("authorization");
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(400).json({ message: "Hãy đăng nhập để sử dụng tính năng này" });
+    }
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({ message: "Hãy đăng nhập để sử dụng tính năng này"});
+        }
+
+        req.user = user;
+
+        next();
+    });
+};

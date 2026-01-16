@@ -22,6 +22,18 @@ const options = {
           bearerFormat: 'JWT',
         },
       },
+      schemas: {
+        TaskInput: {
+          type: 'object',
+          required: ['title'],
+          properties: {
+            title: { type: 'string', example: 'Học Toán' },
+            description: { type: 'string', example: 'Học thuộc cửu chương' },
+            is_completed: { type: 'boolean', example: false },
+            deadline: { type: 'string', format: 'date-time', example: '2026-01-16T23:59:00Z' }
+          }
+        }
+      },
     },
   },
   // Quan trọng: Chỉ định nơi chứa file code có viết chú thích API
