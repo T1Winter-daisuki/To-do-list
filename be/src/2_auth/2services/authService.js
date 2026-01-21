@@ -70,7 +70,7 @@ export const handleRefreshToken = async (refreshToken) => {
             throw new Error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
 
         // Cập nhật tài khoản còn k
-        const user = await findUserById(decoded.id);
+        const user = await authModel.findUserById(decoded.id);
         if (!user) 
             throw new Error('Tài khoản không tồn tại');
 

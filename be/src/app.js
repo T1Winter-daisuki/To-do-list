@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 // 1. Import Swagger
 import swaggerUi from 'swagger-ui-express';
@@ -9,13 +10,15 @@ import authRoutes from '../src/2_auth/5routes/authRoutes.js';
 import taskRoutes from '../src/3_tasks/5routes/taskRoutes.js';
 
 const app = express();
+app.use(cookieParser());
 
 app.use(express.json());
 
 // Cấu hình CORS: Cho phép ai được gọi API
 // Khi lên Cloud, thay dấu '*' bằng tên miền Frontend (để bảo mật)
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || '*', // Mặc định cho phép tất cả nếu chưa có biến này
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
