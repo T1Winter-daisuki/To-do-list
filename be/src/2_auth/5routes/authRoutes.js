@@ -1,5 +1,5 @@
 import express from 'express';
-import { handleRegister, handleLogin } from "../4controllers/authController.js";
+import { handleRegister, handleLogin, refreshToken, logout } from "../4controllers/authController.js";
 import { validRegister, registerRateLimit, registerRateLimitDaily, 
          validLogin, loginRateLimit
 } from "../3middleware/authMiddleware.js";
@@ -134,5 +134,9 @@ router.post('/register', registerRateLimit, registerRateLimitDaily, validRegiste
  *         description: Quá nhiều lần đăng nhập sai (Rate Limit)
  */
 router.post('/login', loginRateLimit, validLogin, handleLogin);
+
+router.post('/refresh', refreshToken);
+
+router.post('/logout', logout);
 
 export default router;
