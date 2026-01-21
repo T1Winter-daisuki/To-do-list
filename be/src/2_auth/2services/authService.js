@@ -7,7 +7,7 @@ const genTok = async(user) => {
     const accessToken = jwt.sign(
         { id: user.id, username: user.username }, 
         process.env.ACCESS_TOKEN_SECRET, 
-        { expiresIn: '15m' }
+        { expiresIn: '3s' }
     );
     const refreshToken = jwt.sign(
         { id: user.id }, 
@@ -70,7 +70,7 @@ export const handleRefreshToken = async (refreshToken) => {
             throw new Error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
 
         // Cập nhật tài khoản còn k
-        const user = await authModel.findUserById(decoded.id);
+        const user = await authModel.findUserbyId(decoded.id);
         if (!user) 
             throw new Error('Tài khoản không tồn tại');
 
