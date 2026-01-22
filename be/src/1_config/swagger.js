@@ -29,8 +29,9 @@ const options = {
           properties: {
             title: { type: 'string', example: 'Học Toán' },
             description: { type: 'string', example: 'Học thuộc cửu chương' },
+            start_time: { type: 'string', format: 'date-time', example: '2026-01-16T20:00:00Z' },
+            deadline: { type: 'string', format: 'date-time', example: '2026-01-16T21:00:00Z' },
             is_completed: { type: 'boolean', example: false },
-            deadline: { type: 'string', format: 'date-time', example: '2026-01-16T23:59:00Z' }
           }
         }
       },

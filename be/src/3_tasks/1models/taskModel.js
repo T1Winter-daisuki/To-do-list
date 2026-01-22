@@ -11,12 +11,12 @@ export const checkExist = async(user_id, title) => {
 }
 
 export const create = async(task) => {
-    const {user_id, title, description, is_completed, deadline} = task;
+    const {user_id, title, description, is_completed, start_time, deadline} = task;
     const query = `
-        INSERT INTO tasks (user_id, title, description, is_completed, deadline)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO tasks (user_id, title, description, is_completed, start_time, deadline)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *`;
-    const result = await pool.query(query, [user_id, title, toNullIfEmpty(description), is_completed || false, toNullIfEmpty(deadline)]);
+    const result = await pool.query(query, [user_id, title, toNullIfEmpty(description), is_completed || false, toNullIfEmpty(start_time), toNullIfEmpty(deadline)]);
     return result.rows[0];
 }
 
@@ -27,13 +27,13 @@ export const findTasks = async(user_id) => {
 }
 
 export const update = async(task) => {
-    const {id, user_id, title, description, is_completed, deadline} = task;
+    const {id, user_id, title, description, is_completed, start_time, deadline} = task;
     const query = `
         UPDATE tasks
-        SET title = $1, description = $2, is_completed = $3, deadline = $4
-        WHERE id = $5 AND user_id = $6
+        SET title = $1, description = $2, is_completed = $3, start_time = $4, deadline = $5, 
+        WHERE id = $6 AND user_id = $7
         RETURNING *`;
-    const result = await pool.query(query, [title, toNullIfEmpty(description), is_completed, toNullIfEmpty(deadline), id, user_id])
+    const result = await pool.query(query, [title, toNullIfEmpty(description), is_completed, toNullIfEmpty(start_time), toNullIfEmpty(deadline), id, user_id])
     return result.rows[0];
 }
 

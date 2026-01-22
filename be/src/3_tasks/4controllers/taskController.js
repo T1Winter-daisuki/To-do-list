@@ -3,10 +3,10 @@ import * as taskService from "../2services/taskService.js";
 export const create = async(req, res) => {
     try {
         const user_id = req.user.id;
-        const { title, description, deadline, is_completed } = req.body;
+        const { title, description, start_time, deadline, is_completed } = req.body;
         const task = await taskService.createTask(
             user_id, 
-            { title, description, is_completed, deadline }
+            { title, description, start_time, deadline, is_completed }
         );
         res.status(201).json({
             message: "Tạo thành công",
@@ -33,11 +33,11 @@ export const update = async(req, res) => {
     try {   
         const user_id = req.user.id;
         const task_id = req.params.id;
-        const { title, description, is_completed, deadline } = req.body;
+        const { title, description, start_time, deadline, is_completed } = req.body;
         const task = await taskService.updateTask(
             task_id, 
             user_id, 
-            { title, description, is_completed, deadline });
+            { title, description, start_time, deadline, is_completed });
         res.status(200).json({
             message: "Cập nhật thành công",
             data: task

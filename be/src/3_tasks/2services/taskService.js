@@ -9,6 +9,7 @@ export const createTask = async(user_id, data) => {
         title: data.title,
         description: data.description,
         is_completed: data.is_completed,
+        start_time: data.start_time,
         deadline: data.deadline
     }
     return await taskModel.create(task);
@@ -25,6 +26,7 @@ export const updateTask = async(id, user_id, data) => {
         title: data.title,
         description: data.description,
         is_completed: data.is_completed,
+        start_time: data.start_time,
         deadline: data.deadline
     }
     const updatedTask = await taskModel.update(task);
