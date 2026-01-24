@@ -21,7 +21,13 @@ export const create = async(task) => {
 }
 
 export const findTasks = async(user_id) => {
-    const query = `SELECT * FROM tasks WHERE user_id = $1 ORDER BY created_at DESC`;
+    const query = `
+        SELECT * FROM tasks 
+        WHERE user_id = $1 
+        ORDER BY 
+            CASE WHEN deadline IS NULL THEN 1 ELSE 0 END,
+            deadline ASC,
+            created_at DESC`;
     const result = await pool.query(query, [user_id]);
     return result.rows;
 }
