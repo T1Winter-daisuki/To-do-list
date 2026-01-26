@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { loginAPI, registerAPI } from "../1services/authServices.js";
+import { loginAPI, registerAPI, logoutAPI } from "../1services/authServices.js";
 import { toast } from "react-toastify"; // thông báo
 
 // loa
@@ -21,13 +21,13 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await loginAPI(username, password);
             if (response.data) {
-                const { user, accessToken } = response.data;
+                const { user } = response.data;
                 const userData = { 
-                    ...user, 
-                    accessToken
+                    ...user
                 };
 
                 setUser(userData);
+                localStorage.setItem('accessToken', response.data.accessToken);
                 localStorage.setItem('user', JSON.stringify(userData));
 
                 toast.success("Đăng nhập thành công");
@@ -44,13 +44,13 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await registerAPI(userData);
             if (response.data) {
-                const { user, accessToken } = response.data;
+                const { user } = response.data;
                 const userData = { 
-                    ...user, 
-                    accessToken
+                    ...user
                 };
                 
                 setUser(userData);
+                localStorage.setItem('accessToken', response.data.accessToken);
                 localStorage.setItem('user', JSON.stringify(userData));
 
                 toast.success("Đăng ký thành công");
@@ -63,10 +63,16 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem('user');
-        toast.info("Đăng xuất thành công");
+    const logout = async () => {
+        try {
+            await logoutAPI();
+        } catch (error) {
+        } finally {
+            setUser(null);
+            localStorage.removeItem('user');
+            localStorage.removeItem('accessToken');
+            toast.info("Đăng xuất thành công");
+        };
     };
 
     const value = {

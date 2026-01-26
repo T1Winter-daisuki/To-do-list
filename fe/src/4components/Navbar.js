@@ -13,10 +13,15 @@ const Navbar = () => {
     const navigate = useNavigate();
     
 
-    const handleLogout = () => {
-        logout();
-        setIsDropdownOpen(false);
-        navigate('/home');
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } catch (error) {
+        } finally {
+            setIsDropdownOpen(false);
+            setIsMenuOpen(false);
+            navigate('/home');
+        }
     };
 
     const toggleMenu = () => {

@@ -5,6 +5,7 @@ import PrivateRoute from './PrivateRoute';
 import LoginPage from '../3pages/auth/LoginPage';
 import RegisterPage from '../3pages/auth/RegisterPage';
 import HomePage from '../3pages/home/HomePage';
+import TodoPage from '../3pages/todo/todoPage';
 
 const AppRoutes = () => {
   return (
@@ -20,7 +21,7 @@ const AppRoutes = () => {
         path="/todo" 
         element={
           <PrivateRoute>
-             <div style={{padding: 50}}>Todo (Coming Soon)</div>
+             <TodoPage />
           </PrivateRoute>
         } 
       />

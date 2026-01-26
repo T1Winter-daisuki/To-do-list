@@ -70,7 +70,7 @@
 .highlight {
     /* Gradient chữ dùng 2 màu đậm nhất */
     background: linear-gradient(to right, #B6AE9F, #9e968b);
-    -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 800;
 }
