@@ -36,7 +36,7 @@ export const update = async(task) => {
     const {id, user_id, title, description, is_completed, start_time, deadline} = task;
     const query = `
         UPDATE tasks
-        SET title = $1, description = $2, is_completed = $3, start_time = $4, deadline = $5, 
+        SET title = $1, description = $2, is_completed = $3, start_time = $4, deadline = $5
         WHERE id = $6 AND user_id = $7
         RETURNING *`;
     const result = await pool.query(query, [title, toNullIfEmpty(description), is_completed, toNullIfEmpty(start_time), toNullIfEmpty(deadline), id, user_id])
