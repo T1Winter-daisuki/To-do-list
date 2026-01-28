@@ -11,3 +11,31 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* 1. Dành cho Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 20px; /* Độ rộng thanh cuộn dọc */
+    height: 20px; /* Độ cao thanh cuộn ngang */
+}
+
+/* Màu nền của rãnh cuộn (Track) */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+/* Tay nắm cuộn (Thumb) */
+::-webkit-scrollbar-thumb {
+    background: #B6AE9F;
+    border-radius: 5px;
+}
+
+/* Hiệu ứng khi di chuột vào tay nắm */
+::-webkit-scrollbar-thumb:hover {
+    background: #9c9485; /* Đậm hơn xíu khi hover */
+}
+
+/* 2. Dành cho Firefox */
+html, body {
+    scrollbar-width: auto;
+    scrollbar-color: #B6AE9F #f1f1f1;
+}

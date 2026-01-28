@@ -329,10 +329,11 @@ const TodoPage = () => {
         return (
             <div className={styles.halfColumn}>
                 <h3 className={styles.sectionTitle}>{title}</h3>
-                <div className={styles.gridHeader}>
-                    <div className={styles.colCenter}>Hoàn thành</div>
-                    <div className={styles.colTitle}>Tên</div>
-                    <div className={styles.colDate}>Deadline</div>
+
+                <div className={styles.listHeader}>
+                    <div className={styles.headerColLeft}>Tên task</div>
+                    <div className={styles.headerColRight}>Deadline</div>
+                    <div className={styles.headerColCenter}>Hoàn thành</div>
                 </div>
 
                 <div className={styles.simpleListBody}>
@@ -343,24 +344,23 @@ const TodoPage = () => {
                             style={getTaskStyle(task)}
                             onClick={() => setDetailTask(task)}>
 
-                            {/* checkbox */}
-                            <div className={styles.colSimpleCheck} onClick={e => e.stopPropagation()}>
+                            {/* name */}
+                            <div className={`${styles.headerColLeft} ${settings.isStrikethrough && task.is_completed ? styles.strikethrough : ''}`}>
+                                {task.title}
+                            </div>
+
+                            {/* deadline */}
+                            <div className={styles.headerColRight}>
+                                {task.deadline ? formatDateTime(task.deadline) : '-'}
+                            </div>{/* checkbox */}
+
+                            <div className={styles.headerColCenter} onClick={e => e.stopPropagation()}>
                                 <input 
                                     type="checkbox" 
                                     checked={task.is_completed} 
                                     onChange={() => handleToggleComplete(task)}
                                     className={styles.checkbox}
                                 />
-                            </div>
-
-                            {/* name */}
-                            <div className={`${styles.colSimpleTitle} ${settings.isStrikethrough && task.is_completed ? styles.strikethrough : ''}`}>
-                                {task.title}
-                            </div>
-
-                            {/* deadline */}
-                            <div className={styles.colSimpleDate}>
-                                {task.deadline ? formatDateTime(task.deadline) : '-'}
                             </div>
                         </div>
                     ))}
@@ -376,15 +376,13 @@ const TodoPage = () => {
                 </div>
 
                 {/* phân trang */}
-                <div className={styles.paginationSimple}>
-                    {totalPages > 1 ? (
-                        <>
-                            <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className={styles.pageBtnSmall}>◀</button>
-                            <span className={styles.pageInfoSmall}>{page}/{totalPages}</span>
-                            <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className={styles.pageBtnSmall}>▶</button>
-                        </>
-                    ) : <div style={{height: '24px'}}></div>}
-                </div>
+                {totalPages > 1 && (
+                    <div className={styles.paginationSimple}>
+                        <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className={styles.pageBtnSmall}>◀</button>
+                        <span className={styles.pageInfoSmall}>{page}/{totalPages}</span>
+                        <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className={styles.pageBtnSmall}>▶</button>
+                    </div>
+                )}
             </div>
         );
     };
@@ -450,7 +448,7 @@ const TodoPage = () => {
                     <div className={styles.contentGrid}>
                         {/* 1/2 trên: today */}
                         <div className={styles.topSection}>
-                            <h3 className={styles.sectionTitle}>☀️ Hôm nay ({todayTasks.length})</h3>
+                            <h3 className={styles.sectionTitle}>Hôm nay ({todayTasks.length})</h3>
                             {renderTodayTable(todayTasks, "Ngày mới rồi, thêm task thôi")}
                         </div>
 
