@@ -23,7 +23,8 @@ export const ThisWeek = (day) => {
 };
 
 export const outOfDate = (deadline) => {
-    return new Date(deadline) < new Date() && !sameDay(new Date(deadline), new Date());
+    if (!deadline) return false;
+    return new Date() > new Date(deadline);
 };
 
 export const toLocalISOString = (date) => {

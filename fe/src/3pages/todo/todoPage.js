@@ -45,45 +45,93 @@ const TodoPage = () => {
 
     // Search, filter
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortDl, setSortDl] = useState('asc'); // hoặc desc
-    const [statusFilter, setStatusFilter] = useState('all'); // hoặc 'pending', 'completed'
     const [justCreatedId, setJustCreatedId] = useState(null);
+    const [activeMenu, setActiveMenu] = useState(null); // 'status', 'weekDay', null 
+    const [weekDayFilter, setWeekDayFilter] = useState(-1); // -1: all, 0 sun, 1 mon, ...
+    const [filters, setFilters] = useState({
+        today: 'all',
+        tomorrow: 'all',
+        week: 'all'
+    });
+    const [sorts, setSorts] = useState({
+        today: 'asc',
+        tomorrow: 'asc',
+        week: 'asc'
+    });
 
-    // dùng useMemo để tiện cho việc giữ kết quả khi định dạng trang thay đổi (như chỉnh sidebar)
+    const handleSort = (section) => {
+        setSorts(prev => ({ ...prev, [section]: prev[section] === 'asc' ? 'desc' : 'asc' }));
+    };
+
+    const handleFilter = (section, status) => {
+        setFilters(prev => ({ ...prev, [section]: status }));
+        setActiveMenu(null);
+    };
+
     const searchOutput = useMemo(() => {
         let result = [...(tasks || [])];
-        // search
-        if (searchQuery)
+        if (searchQuery) {
             result = result.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase()));
-        
-        // filter cho stt
-        if (statusFilter === 'completed') {
-            result = result.filter(t => t.is_completed);
-        } else if (statusFilter === 'pending') {
-            result = result.filter(t => !t.is_completed);
         }
-        
-        // filter cho sort dl
+        return result; 
+    }, [tasks, searchQuery]);
+
+    const processSectionList = (list, section) => {
+        let result = [...list];
+
+        // Lọc status
+        const currentFilter = filters[section]; 
+        if (currentFilter === 'completed') result = result.filter(t => t.is_completed);
+        else if (currentFilter === 'pending') result = result.filter(t => !t.is_completed);
+
+        // Lọc thứ trong tuần
+        if (section === 'week' && weekDayFilter !== -1) {
+            result = result.filter(t => {
+                if (!t.deadline) return false;
+                return new Date(t.deadline).getDay() === weekDayFilter;
+            });
+        }
+
+        // Sort Deadline
+        const currentSort = sorts[section];
         result.sort((a, b) => {
-            if (a.id === justCreatedId) return -1;
+            if (a.id === justCreatedId) return -1; // Task mới tạo lên đầu
             if (b.id === justCreatedId) return 1;
 
-            if (!a.deadline) return 1; 
+            if (!a.deadline) return 1;
             if (!b.deadline) return -1;
-
+            
             const dlA = new Date(a.deadline);
             const dlB = new Date(b.deadline);
-
-            return sortDl === 'asc' ? dlA - dlB : dlB - dlA;
+            return currentSort === 'asc' ? dlA - dlB : dlB - dlA;
         });
 
         return result;
-    }, [tasks, searchQuery, sortDl, statusFilter, justCreatedId]);
+    };
 
-    // lọc 3 bảng ở main
-    const todayTasks = useMemo(() => searchOutput.filter(t => sameDay(new Date(t.deadline), new Date())), [searchOutput]);
-    const tomorrowTasks = useMemo(() => searchOutput.filter(t => Tomorrow(new Date(t.deadline))), [searchOutput]);
-    const weekTasks = useMemo(() => searchOutput.filter(t => ThisWeek(new Date(t.deadline))), [searchOutput]);
+    const todayTasks = useMemo(() => {
+        const raw = searchOutput.filter(t => sameDay(new Date(t.deadline), new Date()));
+        return processSectionList(raw, 'today');
+    }, [searchOutput, filters.today, sorts.today, justCreatedId]);
+
+    const tomorrowTasks = useMemo(() => {
+        const raw = searchOutput.filter(t => Tomorrow(new Date(t.deadline)));
+        return processSectionList(raw, 'tomorrow');
+    }, [searchOutput, filters.tomorrow, sorts.tomorrow, justCreatedId]);
+
+    const weekTasks = useMemo(() => {
+        const raw = searchOutput.filter(t => ThisWeek(new Date(t.deadline)));
+        return processSectionList(raw, 'week');
+    }, [searchOutput, filters.week, sorts.week, weekDayFilter, justCreatedId]); 
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!event.target.closest(`.${styles.filterContainer}`))
+                setActiveMenu(null);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     // CUD
     const [formData, setFormData] = useState({ title: '', description: '', start_time: '', deadline: '', is_completed: false });
@@ -235,8 +283,8 @@ const TodoPage = () => {
     // Today
     const renderTodayTable = (list, emptyMessage) => {
         // phân trang today
-        const totalPages = Math.ceil(todayTasks.length / cnt);
-        const currentTodayTasks = todayTasks.slice(
+        const totalPages = Math.ceil(list.length / cnt);
+        const currentTodayTasks = list.slice(
             (currentPage - 1) * cnt, // for i =
             currentPage * cnt // i <= n
         );
@@ -249,9 +297,44 @@ const TodoPage = () => {
                 {/* Bảng */}
                 <div className={styles.gridHeader}>
                     <div className={styles.colTitle}>Tên</div>
+                    
                     <div className={styles.colDesc}>Mô tả</div>
-                    <div className={styles.colDate}>Deadline</div>
-                    <div className={styles.colCenter}>Hoàn thành</div>
+                    
+                    <div className={styles.filterContainer}>
+                        <div 
+                            className={styles.headerColRight}
+                            onClick={() => handleSort('today')}
+                            style={{ cursor: 'pointer', userSelect: 'none' }}
+                            title="Bấm để sắp xếp theo hạn chót">
+                                Deadline {sorts.today === 'asc' ? '▲' : '▼'}
+                        </div>
+                    </div>
+
+                    <div className={styles.filterContainer}>
+                        <div 
+                            className={styles.headerColCenter}
+                            onClick={() => setActiveMenu(activeMenu === 'status_today' ? null : 'status_today')}
+                            style={{ cursor: 'pointer', userSelect: 'none' }}
+                            title="Lọc trạng thái">
+                                {filters.today === 'all' ? 'Trạng thái' : filters.today === 'pending' ? 'Chưa xong' : 'Đã xong'}
+                                <span style={{fontSize: '13px', marginLeft: '4px'}}>▼</span>
+                        </div>
+
+                        {activeMenu === 'status_today' && (
+                            <div className={styles.dropdownMenu}style={{right: '-50px'}}>
+                                <div 
+                                    className={`${styles.menuItem} ${filters.today === 'all' ? styles.active : ''}`} 
+                                    onClick={() => handleFilter('today', 'all')}>Tất cả</div>
+                                <div 
+                                    className={`${styles.menuItem} ${filters.today === 'pending' ? styles.active : ''}`} 
+                                    onClick={() => handleFilter('today', 'pending')}>Chưa xong</div>
+                                <div 
+                                    className={`${styles.menuItem} ${filters.today === 'completed' ? styles.active : ''}`} 
+                                    onClick={() => handleFilter('today', 'completed')}>Đã xong</div>
+                            </div>
+                        )}
+                    </div>
+
                     <div className={styles.colCenter}>Sửa</div>
                 </div>
 
@@ -318,6 +401,8 @@ const TodoPage = () => {
     };
 
     const renderPagedList = (title, list, page, setPage, emptyMessage) => {
+        const sectionId = title === "Tuần này" ? "week" : "tomorrow";
+
         const totalPages = Math.ceil(list.length / (cnt-1));
         const currentItems = list.slice(
             (page - 1) * (cnt-1),
@@ -331,9 +416,72 @@ const TodoPage = () => {
                 <h3 className={styles.sectionTitle}>{title}</h3>
 
                 <div className={styles.listHeader}>
-                    <div className={styles.headerColLeft}>Tên task</div>
-                    <div className={styles.headerColRight}>Deadline</div>
-                    <div className={styles.headerColCenter}>Hoàn thành</div>
+                    <div className={styles.headerColLeft}>Tên</div>
+                    
+                    <div className={styles.filterContainer}>
+                        {title === "Tuần này" ? (
+                            <>
+                                {/* week */}
+                                <div 
+                                    className={styles.headerColRight}
+                                    onClick={() => setActiveMenu(activeMenu === 'weekDay' ? null : 'weekDay')}
+                                    style={{cursor: 'pointer', userSelect: 'none'}}
+                                >
+                                    {weekDayFilter === -1 ? 'Cả tuần' : `Thứ ${weekDayFilter === 0 ? 'CN' : weekDayFilter + 1}`} ▼
+                                </div>
+                                
+                                {/* Menu chọn thứ */}
+                                {activeMenu === 'weekDay' && (
+                                <div className={styles.dropdownMenu}>
+                                    <div 
+                                        className={`${styles.menuItem} ${weekDayFilter === -1 ? styles.active : ''}`} 
+                                        onClick={() => { setWeekDayFilter(-1); setActiveMenu(null); }}>Cả tuần</div>
+                                        {[1, 2, 3, 4, 5, 6, 0].map(d => (
+                                        <div key={d} 
+                                            className={styles.menuItem} 
+                                            onClick={() => { setWeekDayFilter(d); setActiveMenu(null); }}>
+                                            {d === 0 ? 'Chủ nhật' : `Thứ ${d + 1}`}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            </>
+                        ) : (
+                            /* tomorrow */
+                            <div 
+                                className={styles.headerColRight}
+                                onClick={() => handleSort(sectionId)}
+                                style={{cursor: 'pointer', userSelect: 'none'}}
+                                title="Sắp xếp tăng/giảm"
+                            >
+                                Deadline {sorts[sectionId] === 'asc' ? '▲' : '▼'}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className={styles.filterContainer}>
+                        <div 
+                            className={styles.headerColCenter}
+                            onClick={() => setActiveMenu(activeMenu === `status_${sectionId}` ? null : `status_${sectionId}`)}
+                            style={{cursor: 'pointer', userSelect: 'none'}}
+                        >
+                            {filters[sectionId] === 'all' ? 'Trạng thái' : filters[sectionId] === 'pending' ? 'Chưa xong' : 'Đã xong'} ▼
+                        </div>
+
+                        {activeMenu === `status_${sectionId}` && (
+                            <div className={styles.dropdownMenu}>
+                                <div 
+                                    className={`${styles.menuItem} ${filters[sectionId] === 'all' ? styles.active : ''}`} 
+                                    onClick={() => handleFilter(sectionId, 'all')}>Tất cả</div>
+                                <div 
+                                    className={`${styles.menuItem} ${filters[sectionId] === 'pending' ? styles.active : ''}`} 
+                                    onClick={() => handleFilter(sectionId, 'pending')}>Chưa xong</div>
+                                <div 
+                                    className={`${styles.menuItem} ${filters[sectionId] === 'completed' ? styles.active : ''}`} 
+                                    onClick={() => handleFilter(sectionId, 'completed')}>Đã xong</div>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <div className={styles.simpleListBody}>
@@ -352,8 +500,9 @@ const TodoPage = () => {
                             {/* deadline */}
                             <div className={styles.headerColRight}>
                                 {task.deadline ? formatDateTime(task.deadline) : '-'}
-                            </div>{/* checkbox */}
-
+                            </div>
+                            
+                            {/* checkbox */}
                             <div className={styles.headerColCenter} onClick={e => e.stopPropagation()}>
                                 <input 
                                     type="checkbox" 

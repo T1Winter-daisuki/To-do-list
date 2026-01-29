@@ -183,8 +183,7 @@
 }
 
 .colTitle {
-    font-weight: 600;
-    color: #333;
+    color: #666;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     padding-right: 15px;
     font-size: 13px;
@@ -197,10 +196,11 @@
 }
 .colDate {
     font-size: 13px;
-    color: #555;
+    color: #666;
 }
 .colCenter {
     display: flex;
+    color: #666;
     justify-content: center;
 }
 
@@ -308,16 +308,19 @@
 }
 
 .headerColLeft {
-    text-align: left;
+    text-align: center;
     padding-left: 60px;
     font-size: 13px;
+    color: #666;
 }
 .headerColRight {
     font-size: 13px;
     text-align: center;
+    color: #666;
 }
 .headerColCenter {
     text-align: center;
+    color: #666;
 }
 
 /* Dòng rỗng (Dummy) */
@@ -340,7 +343,7 @@
 /* PHÂN TRANG NHỎ */
 .paginationSimple {
     display: flex;
-    justify-content: center; /* Căn giữa đẹp hơn */
+    justify-content: center;
     align-items: center;
     gap: 10px;
     margin-top: 15px;
@@ -402,4 +405,42 @@
 
 .checkbox {
     width: 16px; height: 16px; cursor: pointer; accent-color: #28a745;
+}
+
+/* Container để định vị menu con */
+.filterContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Chiếm hết chiều cao ô header */
+}
+
+/* Menu thả xuống */
+.dropdownMenu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    z-index: 100;
+    min-width: 160px;
+    padding: 5px 0;
+    margin-top: 5px;
+}
+
+.menuItem {
+    padding: 10px 15px;
+    font-size: 13px;
+    color: #444;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.2s;
+    display: flex;
+    justify-content: space-between;
+}
+.menuItem:hover {
+    background-color: #FBF3D1; 
 }
