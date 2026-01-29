@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import * as taskServices from '../../1services/taskServices';
 import styles from './TodoPage.module.css';
@@ -76,7 +76,8 @@ const TodoPage = () => {
         return result; 
     }, [tasks, searchQuery]);
 
-    const processSectionList = (list, section) => {
+    // Lọc và sort
+    const processSectionList = useCallback((list, section) => {
         let result = [...list];
 
         // Lọc status
@@ -107,22 +108,22 @@ const TodoPage = () => {
         });
 
         return result;
-    };
+    }, [filters, sorts, weekDayFilter, justCreatedId]);
 
     const todayTasks = useMemo(() => {
         const raw = searchOutput.filter(t => sameDay(new Date(t.deadline), new Date()));
         return processSectionList(raw, 'today');
-    }, [searchOutput, filters.today, sorts.today, justCreatedId]);
+    }, [searchOutput, processSectionList]);
 
     const tomorrowTasks = useMemo(() => {
         const raw = searchOutput.filter(t => Tomorrow(new Date(t.deadline)));
         return processSectionList(raw, 'tomorrow');
-    }, [searchOutput, filters.tomorrow, sorts.tomorrow, justCreatedId]);
+    }, [searchOutput, processSectionList]);
 
     const weekTasks = useMemo(() => {
         const raw = searchOutput.filter(t => ThisWeek(new Date(t.deadline)));
         return processSectionList(raw, 'week');
-    }, [searchOutput, filters.week, sorts.week, weekDayFilter, justCreatedId]); 
+    }, [searchOutput, processSectionList]); 
 
     useEffect(() => {
         const handleClickOutside = (event) => {
