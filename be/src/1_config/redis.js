@@ -7,7 +7,7 @@ const client = createClient({
     socket: {
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
-        tls: true,
+        tls: process.env.REDIS_TLS === 'true',
         rejectUnauthorized: false // tránh lỗi chứng chỉ nếu có
     }
 });
