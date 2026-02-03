@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 const instance = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
     timeout: 3000,
@@ -32,7 +34,7 @@ instance.interceptors.response.use(
 
             try {
                 const res = await axios.post(
-                    'http://localhost:5001/api/auth/refresh',
+                    `${BASE_URL}/auth/refresh`,
                     {},
                     { withCredentials: true }
                 );
