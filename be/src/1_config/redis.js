@@ -3,7 +3,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const client = createClient({
-    url: process.env.REDIS_URL
+    password: process.env.REDIS_PASSWORD,
+    socket: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
+        tls: true,
+        rejectUnauthorized: false // tránh lỗi chứng chỉ nếu có
+    }
 });
 
 client.on('error', (err) => console.log('Redis Client Error', err));
