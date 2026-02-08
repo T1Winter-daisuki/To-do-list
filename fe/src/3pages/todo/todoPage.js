@@ -185,9 +185,9 @@ const TodoPage = () => {
             };
             
             if (payload.start_time && payload.deadline && payload.start_time > payload.deadline) {
-            toast.warning("Ngày bắt đầu không thể lớn hơn Deadline!");
-            return;
-        }
+                toast.warning("Ngày bắt đầu không thể lớn hơn Deadline!");
+                return;
+            }
 
             if (isEditing) {
                 payload = { ...payload, id: isEditing };
