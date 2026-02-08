@@ -180,8 +180,8 @@ const TodoPage = () => {
         try {
             let payload = {
                 ...formData,
-                start_time: formData.start_time || null, 
-                deadline: formData.deadline || null
+                start_time: formData.start_time ? new Date(formData.start_time).toISOString() : null, 
+                deadline: formData.deadline ? new Date(formData.deadline).toISOString() : null
             };
 
             if (isEditing) {
@@ -199,7 +199,8 @@ const TodoPage = () => {
 
             setShowCreateModal(false);
         } catch (error) { 
-            toast.error(error.message); 
+            const msg = error.response?.data?.message || error.message;
+            toast.error(msg);
         }
     };
 
@@ -223,7 +224,8 @@ const TodoPage = () => {
             if (payload.is_completed) 
                 toast.info("Đã xong!");
         } catch (error) { 
-            toast.error(error.message); 
+            const msg = error.response?.data?.message || error.message;
+            toast.error(msg);
         }
     };
 
