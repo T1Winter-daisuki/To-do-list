@@ -248,7 +248,25 @@ const TodoPage = () => {
             toast.error(error.message); 
         }
     }
-    
+
+    // while loading
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+    const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+        const fetchTasks = async () => {
+            setIsLoading(true);
+            try {
+                const res = await taskServices.getTasks(user.id);
+                setTasks(res.data);
+            } catch (error) {
+            } finally {
+                setTimeout(() => setIsLoading(false), 500); 
+                setIsLoading(false); 
+            }
+            };
+        if (user && user.id) fetchTasks();
+    }, [user]);
+
     // task colors
     const defaultSettings = {
         colorCompleted: '#d4edda',
@@ -538,6 +556,21 @@ const TodoPage = () => {
             </div>
         );
     };
+
+    if (isLoading) {
+        return (
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh', 
+                fontSize: '18px',
+                color: '#888'
+            }}>
+                ⏳ Đang tải dữ liệu...
+            </div>
+        );
+    }
 
     return (
         <div className={styles.container}>
