@@ -14,12 +14,23 @@ export const Tomorrow = (day) => {
 };
 
 export const ThisWeek = (day) => {
+    const taskday = new Date(day);
     const today = new Date();
-    
-    const mon = new Date(today.setDate(day.getDate() - day.getDay()));
-    const sun = new Date(today.setDate(day.getDate() - day.getDay()+6));
-    
-    return day >= mon && day <= sun;
+
+    taskday.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    const currentDay = today.getDay(); // 0 CN, 1 T2...
+
+    const d = currentDay === 0 ? 6 : currentDay - 1;
+
+    const mon = new Date(today);
+    mon.setDate(today.getDate() - d);
+
+    const sun = new Date(mon);
+    sun.setDate(mon.getDate() + 6);
+
+    return taskday >= mon && taskday <= sun;
 };
 
 export const outOfDate = (deadline) => {
