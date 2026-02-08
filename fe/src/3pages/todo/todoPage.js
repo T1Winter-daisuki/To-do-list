@@ -183,6 +183,11 @@ const TodoPage = () => {
                 start_time: formData.start_time ? new Date(formData.start_time).toISOString() : null, 
                 deadline: formData.deadline ? new Date(formData.deadline).toISOString() : null
             };
+            
+            if (payload.start_time && payload.deadline && payload.start_time > payload.deadline) {
+            toast.warning("Ngày bắt đầu không thể lớn hơn Deadline!");
+            return;
+        }
 
             if (isEditing) {
                 payload = { ...payload, id: isEditing };
