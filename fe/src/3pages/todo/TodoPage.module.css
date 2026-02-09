@@ -285,7 +285,6 @@
 .simpleRowGrid div, 
 .listHeader div {
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
     padding-right: 5px;
 }
@@ -425,7 +424,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%; /* Chiếm hết chiều cao ô header */
+    height: 100%; 
 }
 
 /* Menu thả xuống */
@@ -437,7 +436,7 @@
     border: 1px solid #ddd;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border-radius: 8px;
-    z-index: 100;
+    z-index: 999;
     min-width: 160px;
     padding: 5px 0;
     margin-top: 5px;
@@ -458,97 +457,139 @@
 }
 
 @media screen and (max-width: 768px) {
-    /* 1. Xử lý bố cục tổng thể: Chuyển từ Ngang sang Dọc */
+    
+    /* --- 1. SỬA LỖI MENU & SEARCH BỊ CHÈN --- */
     .container {
-        flex-direction: column; /* Menu lên trên, Nội dung xuống dưới */
-        height: auto;
-        min-height: 100vh;
-        overflow-x: hidden; /* Chặn scroll ngang */
-    }
-
-    /* 2. Thu gọn Sidebar */
-    .sidebar {
-        min-width: 100%; /* Chiếm hết chiều ngang */
-        min-height: auto; /* Chiều cao tự động co giãn */
-        padding: 15px;
-        border-right: none;
-        border-bottom: 2px solid #C5C7BC;
-    }
-    
-    /* Ẩn bớt các phần thừa của menu để tiết kiệm chỗ (tùy chọn) */
-    .navLabel { display: none; }
-    .navSection { margin-bottom: 10px; display: flex; gap: 10px; overflow-x: auto; }
-    .navItem { flex: 1; white-space: nowrap; text-align: center; margin-bottom: 0; }
-    
-    /* 3. Xử lý phần nội dung chính */
-    .mainContent {
-        padding: 15px;
+        display: flex;
         width: 100%;
-        box-sizing: border-box; /* Đảm bảo padding không làm phình size */
-    }
-
-    .mainHeader {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        overflow-x: hidden;
     }
 
-    /* 4. SỬA LỖI QUAN TRỌNG: Gỡ bỏ giới hạn chiều rộng 600px */
-    .todaySection, .topSection {
-        min-width: 100% !important; /* Bắt buộc ghi đè */
+    .sidebar {
         width: 100%;
-    }
-
-    /* 5. Cấu trúc lại bảng công việc (Grid System) */
-    /* Trên mobile chỉ hiện: Checkbox | Tên task | Nút sửa (3 cột) */
-    .gridHeader, .gridRow {
-        grid-template-columns: 40px 1fr 40px; 
-        padding: 0 10px;
-        gap: 5px;
-    }
-
-    /* Ẩn các cột không quan trọng trên mobile */
-    .gridHeader div:nth-child(3), .gridRow .colDesc, /* Ẩn Mô tả */
-    .gridHeader div:nth-child(4), .gridRow .colDate, /* Ẩn Ngày */
-    .gridHeader div:nth-child(5), .gridRow .colCenter:nth-child(5) /* Ẩn Trạng thái */
-    {
-        display: none;
-    }
-
-    /* Chỉnh lại font chữ cho dễ nhìn hơn trên đt */
-    .colTitle { font-size: 14px; }
-    .pageTitle { font-size: 24px; }
-
-    /* 6. Xử lý phần Bottom Section (Ngày mai / Tuần này) */
-    .bottomSection {
-        flex-direction: column; /* Xếp chồng lên nhau thay vì ngang */
+        min-width: 100%;
         min-height: auto;
-    }
-
-    .halfColumn {
-        width: 100%;
-        margin-bottom: 20px;
+        padding: 10px 15px;
+        border-right: none;
+        border-bottom: 2px solid #DEDED1;
         box-sizing: border-box;
     }
 
-    /* Grid cho bảng nhỏ bên dưới */
+    /* Header Menu: Chữ MENU và Nút + */
+    .menuHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* Thanh tìm kiếm: Đẩy xuống dòng và full width */
+    .searchBox {
+        width: 100%;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+    }
+    .searchBox input {
+        width: 100%; /* Chiếm hết chiều ngang */
+        padding: 10px;
+        box-sizing: border-box; /* Ngăn tràn lề */
+        margin: 0;
+    }
+
+    /* Menu điều hướng ngang */
+    .navSection {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        margin-bottom: 0;
+    }
+    .navItem {
+        flex: 1;
+        text-align: center;
+        white-space: nowrap;
+        font-size: 13px;
+        padding: 8px 5px;
+    }
+    .navLabel, .sidebarFooter { display: none; }
+
+
+    /* --- 2. SỬA LỖI NỘI DUNG CHÍNH --- */
+    .mainContent {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+
+    /* --- 3. SỬA LỖI BẢNG --- */
+    .gridHeader, .gridRow, 
     .listHeader, .simpleRowGrid {
-        grid-template-columns: 1fr 40px; /* Chỉ hiện Tên | Ngày */
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: 5px;
+        padding: 0 5px;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    /* HIỆN: Cột 1 (Title) */
+    .gridRow > div:nth-child(1), .gridHeader > div:nth-child(1) {
+        display: block !important; 
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    /* ẨN: Cột 2 (Mô tả) */
+    .colDesc, .gridHeader > div:nth-child(2) { 
+        display: none !important; 
+    }
+    /* HIỆN: Cột 3 (Date/Deadline) - Căn giữa */
+    .gridRow > div:nth-child(3), .gridHeader > div:nth-child(3) {
+        text-align: center;
+        color: #888;
+    }
+    /* HIỆN: Cột 4 (Checkbox) - Căn phải */
+    /* Lưu ý: Checkbox nằm ở div thứ 4 trong JSX của bạn */
+    .gridRow > div:nth-child(4), .gridHeader > div:nth-child(4) {
+        display: flex;
+        justify-content: center;
+    }
+    /* ẨN: Cột 5 (Nút Sửa & Filter Trạng thái ở Header) */
+    .gridRow > div:nth-child(5), .gridHeader > div:nth-child(5) {
+        display: none !important;
     }
     
-    /* Ẩn cột thừa ở bảng dưới */
-    .listHeader div:first-child, /* Ẩn cột STT/Icon nếu có */
-    .headerColCenter {
-        display: none; 
+    /* Tinh chỉnh font chữ bảng dưới */
+    .simpleRowGrid > div:nth-child(1), .headerColLeft {
+        font-size: 13px !important;
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis;
     }
     
-    /* Modal (Popup) full màn hình trên mobile */
-    .modalContent, .settingsModal, .detailCard {
-        width: 95%;
-        max-width: 95%;
-        padding: 15px;
-        max-height: 90vh;
-        overflow-y: auto;
+    .simpleRowGrid > div:nth-child(2), .headerColRight {
+        text-align: center !important;
+    }
+
+    /* Fix cột Checkbox bảng dưới (div cuối cùng) */
+    .simpleRowGrid > div:last-child {
+        justify-content: flex-end;
+    }
+
+    /* Xếp chồng 2 bảng dưới */
+    .bottomSection {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .halfColumn {
+        width: 100%;
+        min-width: 100%;
+        margin: 0;
+        box-sizing: border-box;
     }
 }
 
@@ -559,20 +600,15 @@
         padding: 0 10px;
     }
 
-    /* 2. ẨN CÁC CỘT KHÔNG CẦN THIẾT */
     /* Ẩn Mô tả (.colDesc) */
     .colDesc { 
         display: none !important; 
-    }
-    
+    }    
     /* Ẩn Trạng thái (Cột thứ 5 - Text Pending/Completed) */
-    /* Lưu ý: Check kỹ xem trong HTML của bạn Trạng thái nằm ở vị trí thứ mấy trong gridRow */
-    /* Giả sử cấu trúc là: [Checkbox, Title, Desc, Date, Status, Edit] */
     .gridHeader > div:nth-child(5),
     .gridRow > .colCenter:nth-child(5) {
         display: none !important;
     }
-
     /* 3. TINH CHỈNH TEXT */
     /* Tên Task: Giới hạn 1 dòng, hiện dấu ... */
     .colTitle {
