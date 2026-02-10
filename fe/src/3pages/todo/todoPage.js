@@ -341,13 +341,12 @@ const TodoPage = () => {
                             className={styles.headerColCenter}
                             onClick={() => setActiveMenu(activeMenu === 'status_today' ? null : 'status_today')}
                             style={{ cursor: 'pointer', userSelect: 'none' }}
-                            title="Lọc trạng thái">
-                                {filters.today === 'all' ? 'Trạng thái' : filters.today === 'pending' ? 'Chưa xong' : 'Đã xong'}
-                                <span style={{fontSize: '13px', marginLeft: '4px'}}>▼</span>
+                        >
+                            {filters.today === 'all' ? 'Trạng thái' : filters.today === 'pending' ? 'Chưa xong' : 'Đã xong'} ▼
                         </div>
 
                         {activeMenu === 'status_today' && (
-                            <div className={styles.dropdownMenu}style={{right: '-50px'}}>
+                            <div className={styles.dropdownMenu}>
                                 <div 
                                     className={`${styles.menuItem} ${filters.today === 'all' ? styles.active : ''}`} 
                                     onClick={() => handleFilter('today', 'all')}>Tất cả</div>

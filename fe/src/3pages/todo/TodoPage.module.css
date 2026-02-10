@@ -382,14 +382,17 @@
 
 /* --- MODALS & POPUPS --- */
 .modalOverlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,0.4); backdrop-filter: blur(2px);
     display: flex; justify-content: center; align-items: center; z-index: 1000;
 }
 
 .modalContent, .settingsModal, .detailCard {
-    background: white; padding: 25px; border-radius: 12px;
-    width: 450px; max-width: 90%;
+    background: white; 
+    padding: 25px; 
+    border-radius: 12px;
+    width: 450px; 
+    max-width: 90%;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
@@ -440,6 +443,9 @@
     min-width: 160px;
     padding: 5px 0;
     margin-top: 5px;
+    bottom: auto;
+    overflow-y: auto;
+    max-height: 250px;
 }
 
 .menuItem {
