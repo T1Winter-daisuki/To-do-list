@@ -34,3 +34,15 @@ export const findUsers = async(username, email) => {
     const result = await pool.query(query, [username, email]);
     return result.rows[0];
 }
+
+// setUser
+export const updateUser = async(id, user) => {
+    const {phone, dob, first_name, last_name} = user;
+    const query = `
+        UPDATE users
+        SET phone = COALESCE($1, phone), dob = COALESCE($2, dob), first_name = COALESCE($3, first_name), last_name = COALESCE($4, last_name)
+        WHERE id = $5
+        RETURNING id, username, email, phone, dob, first_name, last_name;`
+    const result = await pool.query(query, [toNullIfEmpty(phone), toNullIfEmpty(dob), toNullIfEmpty(first_name), toNullIfEmpty(last_name), id]);
+    return result.rows[0];
+} 

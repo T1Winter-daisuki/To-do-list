@@ -6,9 +6,26 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const userInfo = {
+    first_name: Joi.string().custom((value) => escape(value)).max(50).allow(null, '').empty('').default(null).optional().trim().messages({
+        'string.max': 'Họ đệm dài quá mức cho phép',
+    }),
+    last_name: Joi.string().custom((value) => escape(value)).max(50).allow(null, '').empty('').default(null).optional().trim().messages({
+        'string.max': 'Tên dài quá mức cho phép',
+    }),
+    dob: Joi.date().iso().less('now').allow(null, '').empty('').default(null).optional().messages({
+        'date.base': 'Ngày sinh không hợp lệ!',
+        'date.format': 'Ngày sinh phải theo định dạng YYYY-MM-DD',
+        'date.less': 'Ngày sinh không được lớn hơn hôm nay',
+    }),
+    phone: Joi.string().custom((value) => escape(value)).pattern(/^[0-9]{10,11}$/).allow(null, '').empty('').default(null).optional().messages({
+        'string.pattern.base': 'Số điện thoại không hợp lệ!',
+    })
+};
+
 const signupSchema = Joi.object({
     username: Joi.string().custom((value) => escape(value)).alphanum().min(4).max(30).required().trim().messages({
-        'string.alphanum': 'Tên đăng nhập chỉ được chứa chữ và số',
+        'string.alphanum': 'Tên đăng nhập chỉ được chứa chữ và số, không chứa dấu và kí tự đặc biệt',
         'string.base': 'Tên đăng nhập phải là chuỗi kí tự',
         'string.empty': 'Tên đăng nhập không được để trống',
         'string.min': 'Tên đăng nhập phải có ít nhất 4 kí tự',
@@ -30,20 +47,7 @@ const signupSchema = Joi.object({
         'string.empty': 'Email không được để trống',
         'any.required': 'Vui lòng nhập Email!'
     }),
-    first_name: Joi.string().custom((value) => escape(value)).max(50).allow(null, '').empty('').default(null).optional().trim().messages({
-        'string.max': 'Họ đệm dài quá mức cho phép',
-    }),
-    last_name: Joi.string().custom((value) => escape(value)).max(50).allow(null, '').empty('').default(null).optional().trim().messages({
-        'string.max': 'Tên dài quá mức cho phép',
-    }),
-    dob: Joi.date().iso().less('now').allow(null, '').empty('').default(null).optional().messages({
-        'date.base': 'Ngày sinh không hợp lệ!',
-        'date.format': 'Ngày sinh phải theo định dạng YYYY-MM-DD',
-        'date.less': 'Ngày sinh không được lớn hơn hôm nay',
-    }),
-    phone: Joi.string().custom((value) => escape(value)).pattern(/^[0-9]{10,11}$/).allow(null, '').empty('').default(null).optional().messages({
-        'string.pattern.base': 'Số điện thoại không hợp lệ!',
-    })
+    ...userInfo
 });
 
 export const validRegister = (req, res, next) => {
@@ -105,24 +109,39 @@ export const loginRateLimit = rateLimit({
     max: 5,
     message: { message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau 30 giây.' },
     standardHeaders: true,
-    legacyHeaders: false,
+    legacyHeaders: false
 });
 
 export const verifyToken = (req, res, next) => {
     const authHeader = req.header("authorization");
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) {
+    if (!token)
         return res.status(400).json({ message: "Hãy đăng nhập để sử dụng tính năng này" });
-    }
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) {
+        if (err)
             return res.status(403).json({ message: "Hãy đăng nhập để sử dụng tính năng này"});
-        }
 
         req.user = user;
 
         next();
     });
+};
+
+const updateSchema = Joi.object({
+    ...userInfo
+});
+
+export const validUpdate = (req, res, next) => {
+    // stripUnknown: nếu user gửi thừa trường (vd: gửi cả username, password) thì tự động xóa đi, chỉ giữ lại thông tin cá nhân
+    const { error, value } = updateSchema.validate(req.body, { abortEarly: false, stripUnknown: true });
+
+    if (error) {
+        const messages = error.details.map(detail => detail.message);
+        return res.status(400).json({ message: messages.join(', ') });
+    }
+    req.body = value;
+    
+    next();
 };

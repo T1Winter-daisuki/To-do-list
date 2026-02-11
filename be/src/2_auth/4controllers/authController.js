@@ -2,7 +2,7 @@ import * as authService from "../2services/authService.js";
 
 const cookieOptions = {
     httpOnly: true, // Chống XSS
-    secure: false, // deploy lên https thì để true
+    secure: true, // deploy lên https thì để true
     path: '/',
     sameSite: 'strict' // Chống CSRF
 };
@@ -73,3 +73,18 @@ export const logout = (req, res) => {
     res.clearCookie('refreshToken');
     res.status(200).json({ message: "Đăng xuất thành công" });
 };
+
+export const handleUpdate = async(req, res) => {
+    try {
+        const userId = req.user.id;
+        const data = req.body;
+        const profile = await authService.updatePro5(userId, data);
+
+        res.status(200).json({
+            message: "Cập nhật hồ sơ thành công!",
+            data: profile
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}

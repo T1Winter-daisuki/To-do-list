@@ -110,3 +110,11 @@ export const loginService = async(data) => {
         ...token
     };
 }
+
+export const updatePro5 = async(userId, data) => {
+    const pro5 = await authModel.updateUser(userId, data);
+    if (!pro5) 
+        throw new Error('Cập nhật thất bại');
+    
+    return pro5;
+}
