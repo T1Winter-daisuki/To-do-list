@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { loginAPI, registerAPI, logoutAPI } from "../1services/authServices.js";
+import { loginAPI, registerAPI, logoutAPI, updateAPI } from "../1services/authServices.js";
 import { toast } from "react-toastify"; // thông báo
 
 // loa
@@ -75,11 +75,34 @@ export const AuthProvider = ({ children }) => {
         };
     };
 
+    const update = async(userData) => {
+        try {
+            const response = await updateAPI(userData);
+            if (response.data) {
+                const { user } = response.data;
+                const userData = {
+                    ...user
+                };
+
+                setUser(userData);
+                localStorage.setItem('user', JSON.stringify(userData));
+
+                toast.success("Cập nhật thành công");
+                return true;
+            }
+        } catch (error) {
+            const message = error.response?.data?.message || "Cập nhật thất bại";
+            toast.error(message);
+            return false;
+        }
+    };
+
     const value = {
         user,
         login,
         register,
         logout,
+        update,
         loading
     };
 

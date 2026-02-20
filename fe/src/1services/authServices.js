@@ -12,4 +12,8 @@ const logoutAPI = () => {
     return axios.post('/api/auth/logout');
 }
 
-export { registerAPI, loginAPI, logoutAPI };
+const updateAPI = () => {
+    return axios.put('/api/auth/update');
+}
+
+export { registerAPI, loginAPI, logoutAPI, updateAPI };
