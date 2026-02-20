@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react'
 import { toast } from 'react-toastify';
 import * as taskServices from '../../1services/taskServices';
 import styles from './TodoPage.module.css';
+import { useAuth } from '../../2context/AuthContext';
 import { sameDay, Tomorrow, ThisWeek, outOfDate, toLocalISOString, formatDateTime } from '../../utils/dateHelper';
 
 const TodoPage = () => {
@@ -255,7 +256,7 @@ const TodoPage = () => {
     }
 
     // while loading
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+    const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
         const fetchTasks = async () => {
