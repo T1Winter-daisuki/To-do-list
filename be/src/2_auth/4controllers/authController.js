@@ -1,3 +1,4 @@
+import { findUserbyId } from "../1models/authModel.js";
 import * as authService from "../2services/authService.js";
 
 const cookieOptions = {
@@ -88,3 +89,20 @@ export const handleUpdate = async(req, res) => {
         res.status(400).json({ message: error.message });
     }
 }
+
+export const getUser = async(req, res) => {
+    try {
+        const userID = req.user.id;
+        const user = await findUserbyId(userID);
+
+        if (!user)
+            return res.status(404).json({ message: "Hãy đăng nhập để sử dụng tính năng này"});
+
+        res.status(200).json({
+            message: "Lấy thông tin thành công",
+            data: user
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};

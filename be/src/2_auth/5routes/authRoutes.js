@@ -1,5 +1,5 @@
 import express from 'express';
-import { handleRegister, handleLogin, refreshToken, logout, handleUpdate } from "../4controllers/authController.js";
+import { handleRegister, handleLogin, refreshToken, logout, handleUpdate, getUser } from "../4controllers/authController.js";
 import { validRegister, registerRateLimit, registerRateLimitDaily, 
          validLogin, loginRateLimit, verifyToken, validUpdate
 } from "../3middleware/authMiddleware.js";
@@ -224,5 +224,7 @@ router.post('/logout', logout);
  *                   type: string
  */
 router.put('/update', verifyToken, validUpdate, handleUpdate);
+
+router.get('/user', verifyToken, getUser);
 
 export default router;
