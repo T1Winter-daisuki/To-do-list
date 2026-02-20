@@ -136,41 +136,172 @@
   }
 }
 
-/* Phủ đen nền */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+
 .modalOverlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* Đảm bảo nổi lên trên tất cả */
+    z-index: 9999;
+    font-family: 'Quicksand', sans-serif;
 }
 
-/* Khung trắng Form */
+/* Khung Modal y hệt form đăng ký */
 .modalContent {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    color: #333;
+    background: rgba(255, 255, 255, 0.98);
+    padding: 40px 50px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(182, 174, 159, 0.4);
+    width: 100%;
+    max-width: 500px; /* Rộng 500px để chia 2 cột đẹp */
+    border: 1px solid #fff;
+    animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Khung Input cho form đẹp hơn */
-.inputField {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    outline: none;
-    font-size: 14px;
+.modalContent h2 {
+    color: #5D574F;
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 1px;
+    text-align: center;
 }
-.inputField:focus {
-    border-color: #4a90e2;
+
+/* Bố cục chia cột */
+.row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 5px;
+}
+
+.inputGroup {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.inputGroup label {
+    margin-bottom: 8px;
+    color: #888277;
+    font-weight: 600;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+/* Các ô input màu be nhạt giống Register */
+.inputGroup input {
+    width: 100%;
+    padding: 14px 15px;
+    border: 2px solid #DEDED1;
+    background-color: #FBF3D1;
+    border-radius: 12px;
+    font-size: 15px;
+    color: #555;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.inputGroup input:focus {
+    border-color: #B6AE9F;
+    background-color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.inputGroup input:focus + label {
+    color: #B6AE9F;
+}
+
+.inputDisabled {
+    background-color: #E8E6E1 !important;
+    color: #999 !important;
+    cursor: not-allowed;
+    border-color: #DEDED1 !important;
+}
+
+.inputDisabled:focus {
+    transform: none !important;
+    box-shadow: none !important;
+    border-color: #DEDED1 !important;
+}
+
+/* Khu vực chứa nút bấm */
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Nút Lưu (Giống nút Đăng ký) */
+.btnSave {
+    padding: 14px 25px;
+    background-color: #B6AE9F;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(182, 174, 159, 0.4);
+}
+
+.btnSave:hover {
+    background-color: #9E9689;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(182, 174, 159, 0.6);
+}
+
+.btnSave:active {
+    transform: scale(0.98);
+}
+
+/* Nút Hủy (Tông màu xám be nhạt) */
+.btnCancel {
+    padding: 14px 25px;
+    background-color: #DEDED1;
+    color: #5D574F;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btnCancel:hover {
+    background-color: #C5C7BC;
+    transform: translateY(-3px);
+}
+
+.btnCancel:active {
+    transform: scale(0.98);
+}
+
+/* Hiệu ứng trượt lên */
+@keyframes slideUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 600px) {
+    .row {
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: 0;
+    }
+    .modalContent {
+        padding: 30px 25px;
+    }
 }

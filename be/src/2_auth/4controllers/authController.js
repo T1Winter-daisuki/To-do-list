@@ -79,11 +79,11 @@ export const handleUpdate = async(req, res) => {
     try {
         const userId = req.user.id;
         const data = req.body;
-        const profile = await authService.updatePro5(userId, data);
+        const user = await authService.updatePro5(userId, data);
 
         res.status(200).json({
             message: "Cập nhật hồ sơ thành công!",
-            data: profile
+            data: user
         });
     } catch (error) {
         res.status(400).json({ message: error.message });

@@ -4,28 +4,48 @@ import { useAuth } from '../2context/AuthContext';
 import styles from './Navbar.module.css';
 import { FaUserCircle } from 'react-icons/fa';
 import { RiMenu3Line, RiCloseLine } from 'react-icons/ri';
-import { updateAPI } from '../1services/authServices';
+import { getUserAPI } from '../1services/authServices';
 
 const Navbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     
-    const { user, logout } = useAuth();
+    const { user, logout, update } = useAuth();
     const navigate = useNavigate();
     
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [isLoadingProfile, setIsLoadingProfile] = useState(false);
     const [formData, setFormData] = useState({ first_name: '', last_name: '', phone: '', dob: '' });
    
     useEffect(() => {
-        if (user && isProfileModalOpen) {
-            setFormData({
-                first_name: user.first_name || '',
-                last_name: user.last_name || '',
-                phone: user.phone || '',
-                dob: user.dob ? user.dob.split('T')[0] : '' 
-            });
+        if (isProfileModalOpen && user) {
+            const fetchProfile = async () => {
+            setIsLoadingProfile(true);
+            try {
+                const res = await getUserAPI();
+                const userData = res.data
+
+                setFormData({
+                    first_name: userData?.first_name || '',
+                    last_name: userData?.last_name || '',
+                    phone: userData?.phone || '',
+                    dob: userData?.dob ? userData.dob.split('T')[0] : '' 
+                });
+            } catch (error) {
+                setFormData({
+                    first_name: user?.first_name || '',
+                    last_name: user?.last_name || '',
+                    phone: user?.phone || '',
+                    dob: user?.dob ? user.dob.split('T')[0] : ''
+                });
+            } finally {
+                setIsLoadingProfile(false);
+            }
+        };
+
+            fetchProfile();
         }
-    }, [user, isProfileModalOpen]);
+    }, [isProfileModalOpen, user]);
 
     const handleLogout = async () => {
         try {
@@ -48,7 +68,7 @@ const Navbar = () => {
 
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
-        const success = await updateAPI(formData);
+        const success = await update(formData);
         if (success)
             setIsProfileModalOpen(false);
     };
@@ -139,35 +159,96 @@ const Navbar = () => {
                 <Link to="/login" className={styles.loginBtn}>Đăng nhập</Link>
             )}
             </div>
-            
+
             {isProfileModalOpen && (
                 <div className={styles.modalOverlay} onClick={() => setIsProfileModalOpen(false)}>
                     <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <h3 style={{marginBottom: '20px', textAlign: 'center'}}>Cập nhật thông tin</h3>
+                        <h2 style={{marginBottom: '25px', textAlign: 'center', color: '#333'}}>Cập nhật thông tin</h2>
                         
-                        <form onSubmit={handleUpdateSubmit} style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
-                            <div>
-                                <label style={{fontSize:'14px', color:'#555'}}>Họ đệm:</label>
-                                <input name="first_name" value={formData.first_name} onChange={handleFormChange} className={styles.inputField} />
+                        {isLoadingProfile ? (
+                            <div style={{textAlign: 'center', padding: '40px 20px', color: '#666'}}>
+                                ⏳ Đang tải thông tin cá nhân...
                             </div>
-                            <div>
-                                <label style={{fontSize:'14px', color:'#555'}}>Tên:</label>
-                                <input name="last_name" value={formData.last_name} onChange={handleFormChange} className={styles.inputField} />
-                            </div>
-                            <div>
-                                <label style={{fontSize:'14px', color:'#555'}}>Số điện thoại:</label>
-                                <input name="phone" value={formData.phone} onChange={handleFormChange} className={styles.inputField} />
-                            </div>
-                            <div>
-                                <label style={{fontSize:'14px', color:'#555'}}>Ngày sinh:</label>
-                                <input type="date" name="dob" value={formData.dob} onChange={handleFormChange} className={styles.inputField} />
-                            </div>
-                            
-                            <div style={{display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px'}}>
-                                <button type="button" onClick={() => setIsProfileModalOpen(false)} style={{padding: '8px 15px', borderRadius:'5px', border:'1px solid #ccc', background:'white', cursor:'pointer'}}>Hủy</button>
-                                <button type="submit" style={{padding: '8px 15px', borderRadius:'5px', border:'none', background:'#4a90e2', color:'white', cursor:'pointer'}}>Lưu</button>
-                            </div>
-                        </form>
+                        ) : (
+                            <form onSubmit={handleUpdateSubmit}>
+                                
+                                <div className={styles.row}>
+                                    <div className={styles.inputGroup}>
+                                        <label>Username (Tên đăng nhập)</label>
+                                        <input 
+                                            type="text" 
+                                            value={user?.username || ''} 
+                                            disabled 
+                                            className={styles.inputDisabled}
+                                        />
+                                    </div>
+                                    <div className={styles.inputGroup}>
+                                        <label>Email</label>
+                                        <input 
+                                            type="email" 
+                                            value={user?.email || ''} 
+                                            disabled 
+                                            className={styles.inputDisabled}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Hàng 1: Họ và Tên */}
+                                <div className={styles.row}>
+                                    <div className={styles.inputGroup}>
+                                        <label>Họ</label>
+                                        <input 
+                                            type="text" 
+                                            name="first_name" 
+                                            placeholder="Họ/First name"
+                                            value={formData.first_name} 
+                                            onChange={handleFormChange} 
+                                        />
+                                    </div>
+                                    <div className={styles.inputGroup}>
+                                        <label>Tên</label>
+                                        <input 
+                                            type="text" 
+                                            name="last_name" 
+                                            placeholder="Tên/Last name"
+                                            value={formData.last_name} 
+                                            onChange={handleFormChange} 
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Hàng 2: Số điện thoại và Ngày sinh */}
+                                <div className={styles.row}>
+                                    <div className={styles.inputGroup}>
+                                        <label>Số điện thoại</label>
+                                        <input 
+                                            type="text" 
+                                            name="phone" 
+                                            placeholder="SĐT/Phone number"
+                                            value={formData.phone} 
+                                            onChange={handleFormChange}
+                                            pattern="[0-9]{10,11}"
+                                            title="Số điện thoại phải từ 10-11 số"
+                                        />
+                                    </div>
+                                    <div className={styles.inputGroup}>
+                                        <label>Ngày sinh</label>
+                                        <input 
+                                            type="date" 
+                                            name="dob" 
+                                            value={formData.dob} 
+                                            onChange={handleFormChange}
+                                            max={new Date().toISOString().split("T")[0]} 
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <div className={styles.modalActions}>
+                                    <button type="button" onClick={() => setIsProfileModalOpen(false)} className={styles.btnCancel}>Hủy</button>
+                                    <button type="submit" className={styles.btnSave}>Lưu thay đổi</button>
+                                </div>
+                            </form>
+                        )}
                     </div>
                 </div>
             )}
