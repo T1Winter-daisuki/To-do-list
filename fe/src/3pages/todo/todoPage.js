@@ -670,7 +670,8 @@ const TodoPage = () => {
                                 placeholder="Tên Task" 
                                 value={formData.title} 
                                 onChange={e => setFormData({...formData, title: e.target.value})} 
-                                required />
+                                required 
+                                autoFocus/>
                             
                             {/* des */}
                             <textarea 
