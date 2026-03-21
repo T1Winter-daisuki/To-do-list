@@ -633,7 +633,9 @@ const TodoPage = () => {
                     <h1 className={styles.pageTitle}>
                         {viewMode === 'list' ? 'List View' : viewMode === 'calendar' ? 'Calendar' : 'Sticky Wall'}
                     </h1>
-                    <span className={styles.taskCount}>{totalWeeklyTasks} Tasks</span>
+                    <span className={styles.taskCount}>
+                        {totalWeeklyTasks} {totalWeeklyTasks <= 1 ? 'Task' : 'Tasks'}
+                    </span>
                 </div>
 
                 {viewMode === 'list' ? (
