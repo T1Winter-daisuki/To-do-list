@@ -106,6 +106,7 @@ export const loginService = async(data) => {
             id: user.id,
             username: user.username,
             email: user.email,
+            first_name: user.first_name
         }, 
         ...token
     };

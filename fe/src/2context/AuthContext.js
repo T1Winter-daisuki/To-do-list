@@ -79,13 +79,13 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await updateAPI(userData);
             if (response.data) {
-                const { user } = response.data;
-                const userData = {
-                    ...user
-                };
+                const updateData = response.data;
+                console.log("1. Toàn bộ response.data từ BE:", response.data);
+                console.log("2. updateData bóc ra được:", updateData);
+                const updateUser = { ...user, ...updateData };
 
-                setUser(userData);
-                localStorage.setItem('user', JSON.stringify(userData));
+                localStorage.setItem('user', JSON.stringify(updateUser));
+                setUser(updateUser);
 
                 toast.success("Cập nhật thành công");
                 return true;

@@ -119,7 +119,7 @@ const Navbar = () => {
                             <span 
                                 onClick={handleLogout} 
                                 style={{color: '#ff7e5f', cursor:'pointer', fontWeight: 'bold'}}>
-                                    Đăng xuất ({user.username})
+                                    Đăng xuất ({user.first_name || user.username})
                             </span>
                         </>
                     ) : (
@@ -136,7 +136,7 @@ const Navbar = () => {
                     </div>
                     <div className={styles.userInfo}>
                         <span className={styles.greeting}>Hi, </span>
-                        <span className={styles.username}>{user.username}</span>
+                        <span className={styles.username}>{user.first_name || user.username}</span>
                     </div>
                     {isDropdownOpen && (
                     <div className={styles.dropdown}>
@@ -199,9 +199,9 @@ const Navbar = () => {
                                         <label>Họ</label>
                                         <input 
                                             type="text" 
-                                            name="first_name" 
-                                            placeholder="Họ/First name"
-                                            value={formData.first_name} 
+                                            name="last_name" 
+                                            placeholder="Họ/Last name"
+                                            value={formData.last_name} 
                                             onChange={handleFormChange} 
                                         />
                                     </div>
@@ -209,9 +209,9 @@ const Navbar = () => {
                                         <label>Tên</label>
                                         <input 
                                             type="text" 
-                                            name="last_name" 
-                                            placeholder="Tên/Last name"
-                                            value={formData.last_name} 
+                                            name="first_name" 
+                                            placeholder="Tên/First name"
+                                            value={formData.first_name} 
                                             onChange={handleFormChange} 
                                         />
                                     </div>
