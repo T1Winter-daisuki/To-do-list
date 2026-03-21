@@ -126,6 +126,8 @@ const TodoPage = () => {
         return processSectionList(raw, 'week');
     }, [searchOutput, processSectionList]); 
 
+    const totalWeeklyTasks = todayTasks.length + tomorrowTasks.length + weekTasks.length;
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!event.target.closest(`.${styles.filterContainer}`))
@@ -631,7 +633,7 @@ const TodoPage = () => {
                     <h1 className={styles.pageTitle}>
                         {viewMode === 'list' ? 'List View' : viewMode === 'calendar' ? 'Calendar' : 'Sticky Wall'}
                     </h1>
-                    <span className={styles.taskCount}>{tasks.length} Tasks</span>
+                    <span className={styles.taskCount}>{totalWeeklyTasks} Tasks</span>
                 </div>
 
                 {viewMode === 'list' ? (
