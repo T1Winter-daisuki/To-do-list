@@ -1,12 +1,14 @@
-import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import * as taskServices from '../../1services/taskServices';
+import { useTasks } from '../../5hooks/Tasks';
 import styles from './TodoPage.module.css';
 import { useAuth } from '../../2context/AuthContext';
-import { sameDay, Tomorrow, ThisWeek, outOfDate, toLocalISOString, formatDateTime } from '../../utils/dateHelper';
+import { outOfDate, toLocalISOString, formatDateTime } from '../../utils/dateHelper';
 
 const TodoPage = () => {
-    const [viewMode, setViewMode] = useState('list');
+    const navigate = useNavigate();
+    const location = useLocation();
     const [showSettingsModal, setShowSettingsModal] = useState(false);
 
     // resize sidebar
@@ -30,112 +32,9 @@ const TodoPage = () => {
         };
     }, []);
 
-    const [tasks, setTasks] = useState([]);
-    // getTask
-    const loadTasks = async () => {
-        try {
-            const res = await taskServices.getTasks();
-            setTasks(res.data || []);
-        } catch (error) { 
-            console.error(error); 
-        }
-    };
-    useEffect(() => { 
-        loadTasks(); 
-    }, []);
-
-    // Search, filter
+    // CUD
     const [searchQuery, setSearchQuery] = useState('');
     const [justCreatedId, setJustCreatedId] = useState(null);
-    const [activeMenu, setActiveMenu] = useState(null); // 'status', 'weekDay', null 
-    const [weekDayFilter, setWeekDayFilter] = useState(-1); // -1: all, 0 sun, 1 mon, ...
-    const [filters, setFilters] = useState({
-        today: 'all',
-        tomorrow: 'all',
-        week: 'all'
-    });
-    const [sorts, setSorts] = useState({
-        today: 'asc',
-        tomorrow: 'asc',
-        week: 'asc'
-    });
-
-    const handleSort = (section) => {
-        setSorts(prev => ({ ...prev, [section]: prev[section] === 'asc' ? 'desc' : 'asc' }));
-    };
-
-    const handleFilter = (section, status) => {
-        setFilters(prev => ({ ...prev, [section]: status }));
-        setActiveMenu(null);
-    };
-
-    const searchOutput = useMemo(() => {
-        let result = [...(tasks || [])];
-        if (searchQuery) {
-            result = result.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase()));
-        }
-        return result; 
-    }, [tasks, searchQuery]);
-
-    // Lọc và sort
-    const processSectionList = useCallback((list, section) => {
-        let result = [...list];
-
-        // Lọc status
-        const currentFilter = filters[section]; 
-        if (currentFilter === 'completed') result = result.filter(t => t.is_completed);
-        else if (currentFilter === 'pending') result = result.filter(t => !t.is_completed);
-
-        // Lọc thứ trong tuần
-        if (section === 'week' && weekDayFilter !== -1) {
-            result = result.filter(t => {
-                if (!t.deadline) return false;
-                return new Date(t.deadline).getDay() === weekDayFilter;
-            });
-        }
-
-        // Sort Deadline
-        const currentSort = sorts[section];
-        result.sort((a, b) => {
-            if (a.id === justCreatedId) return -1; // Task mới tạo lên đầu
-            if (b.id === justCreatedId) return 1;
-
-            if (!a.deadline) return 1;
-            if (!b.deadline) return -1;
-            
-            const dlA = new Date(a.deadline);
-            const dlB = new Date(b.deadline);
-            return currentSort === 'asc' ? dlA - dlB : dlB - dlA;
-        });
-
-        return result;
-    }, [filters, sorts, weekDayFilter, justCreatedId]);
-
-    const todayTasks = useMemo(() => {
-        const raw = searchOutput.filter(t => sameDay(new Date(t.deadline), new Date()));
-        return processSectionList(raw, 'today');
-    }, [searchOutput, processSectionList]);
-
-    const tomorrowTasks = useMemo(() => {
-        const raw = searchOutput.filter(t => Tomorrow(new Date(t.deadline)));
-        return processSectionList(raw, 'tomorrow');
-    }, [searchOutput, processSectionList]);
-
-    const weekTasks = useMemo(() => {
-        const raw = searchOutput.filter(t => ThisWeek(new Date(t.deadline)));
-        return processSectionList(raw, 'week');
-    }, [searchOutput, processSectionList]); 
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (!event.target.closest(`.${styles.filterContainer}`))
-                setActiveMenu(null);
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    // CUD
     const [formData, setFormData] = useState({ title: '', description: '', start_time: '', deadline: '', is_completed: false });
     const [isEditing, setIsEditing] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -190,50 +89,18 @@ const TodoPage = () => {
                 return;
             }
 
-            if (isEditing) {
-                payload = { ...payload, id: isEditing };
-                const res = await taskServices.updateTask(isEditing, payload);
-                setTasks(tasks.map(t => t.id === isEditing ? res.data : t));
-                toast.success("Đã cập nhật!");
-                setJustCreatedId(null);
-            } else {
-                const res = await taskServices.createTask(payload);
-                setTasks([res.data, ...tasks]);
-                toast.success("Đã thêm mới!");
-                setJustCreatedId(res.data.id);
+            const result = await handleCreateOrUpdateTask(payload, isEditing);
+        
+            if (result.success) {
+                setJustCreatedId(isEditing ? null : result.data.id);
+                setShowCreateModal(false);
             }
-
-            setShowCreateModal(false);
         } catch (error) { 
             const msg = error.response?.data?.message || error.message;
             toast.error(msg);
         }
     };
 
-    // check done
-    const handleToggleComplete = async (task) => {
-        try {
-            const payload = {
-                id: task.id,
-                title: task.title,
-                description: task.description || "",
-
-                start_time: task.start_time,
-                deadline: task.deadline,
-                
-                is_completed: !task.is_completed
-            };
-
-            const res = await taskServices.updateTask(task.id, payload);
-            setTasks(prevTasks => prevTasks.map(t => t.id === task.id ? res.data : t));
-            
-            if (payload.is_completed) 
-                toast.info("Đã xong!");
-        } catch (error) { 
-            const msg = error.response?.data?.message || error.message;
-            toast.error(msg);
-        }
-    };
 
     // D
     const [detailTask, setDetailTask] = useState(null);
@@ -245,11 +112,10 @@ const TodoPage = () => {
     const handleDelete = async () => {
         if (!deleteTaskId) return;
         try {
-            await taskServices.deleteTask(deleteTaskId);
-            
-            setTasks(tasks.filter(t => t.id !== deleteTaskId));
-            toast.success("Đã xóa task!");
-            setDeleteTaskId(null);
+            const success = await handleDeleteTask(deleteTaskId);
+            if (success) {
+                setDeleteTaskId(null);
+            }
         } catch (error) { 
             toast.error(error.message); 
         }
@@ -257,21 +123,10 @@ const TodoPage = () => {
 
     // while loading
     const { user } = useAuth();
-    const [isLoading, setIsLoading] = useState(true);
-    useEffect(() => {
-        const fetchTasks = async () => {
-            setIsLoading(true);
-            try {
-                const res = await taskServices.getTasks(user.id);
-                setTasks(res.data);
-            } catch (error) {
-            } finally {
-                setTimeout(() => setIsLoading(false), 500); 
-                setIsLoading(false); 
-            }
-            };
-        if (user && user.id) fetchTasks();
-    }, [user]);
+    const { 
+        tasks, isLoading, 
+        handleCreateOrUpdateTask, handleToggleComplete, handleDeleteTask 
+    } = useTasks(user?.id);
 
     // task colors
     const defaultSettings = {
@@ -298,268 +153,6 @@ const TodoPage = () => {
         if (task.deadline && outOfDate(task.deadline)) 
             return { backgroundColor: settings.colorOverdue };
         return { backgroundColor: settings.colorPending };
-    };
-
-    // Main content cho Lists
-    // setup phân trang cho 3 bảng
-    const [currentPage, setCurrentPage] = useState(1);
-    const [tomorrowPage, setTomorrowPage] = useState(1);
-    const [weekPage, setWeekPage] = useState(1);
-    const cnt = 5;
-
-    // Today
-    const renderTodayTable = (list, emptyMessage) => {
-        // phân trang today
-        const totalPages = Math.ceil(list.length / cnt);
-        const currentTodayTasks = list.slice(
-            (currentPage - 1) * cnt, // for i =
-            currentPage * cnt // i <= n
-        );
-
-        const emptyRowsCount = Math.max(0, cnt - currentTodayTasks.length);
-
-        return (
-            <div className={styles.todaySection}>
-                
-                {/* Bảng */}
-                <div className={styles.gridHeader}>
-                    <div className={styles.colTitle}>Tên</div>
-                    
-                    <div className={styles.colDesc}>Mô tả</div>
-                    
-                    <div className={styles.filterContainer}>
-                        <div 
-                            className={styles.headerColRight}
-                            onClick={() => handleSort('today')}
-                            style={{ cursor: 'pointer', userSelect: 'none' }}
-                            title="Bấm để sắp xếp theo hạn chót">
-                                Deadline {sorts.today === 'asc' ? '▲' : '▼'}
-                        </div>
-                    </div>
-
-                    <div className={styles.filterContainer}>
-                        <div 
-                            className={styles.headerColCenter}
-                            onClick={() => setActiveMenu(activeMenu === 'status_today' ? null : 'status_today')}
-                            style={{ cursor: 'pointer', userSelect: 'none' }}
-                        >
-                            {filters.today === 'all' ? 'Trạng thái' : filters.today === 'pending' ? 'Chưa xong' : 'Đã xong'} ▼
-                        </div>
-
-                        {activeMenu === 'status_today' && (
-                            <div className={styles.dropdownMenu}>
-                                <div 
-                                    className={`${styles.menuItem} ${filters.today === 'all' ? styles.active : ''}`} 
-                                    onClick={() => handleFilter('today', 'all')}>Tất cả</div>
-                                <div 
-                                    className={`${styles.menuItem} ${filters.today === 'pending' ? styles.active : ''}`} 
-                                    onClick={() => handleFilter('today', 'pending')}>Chưa xong</div>
-                                <div 
-                                    className={`${styles.menuItem} ${filters.today === 'completed' ? styles.active : ''}`} 
-                                    onClick={() => handleFilter('today', 'completed')}>Đã xong</div>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className={styles.colCenter}>Sửa</div>
-                </div>
-
-                {/* 2. BODY LIST */}
-                <div className={styles.gridBody}>
-                    {currentTodayTasks.map(task => (
-                        <div 
-                            key={task.id} 
-                            className={styles.gridRow} 
-                            style={getTaskStyle(task)} 
-                            onClick={() => setDetailTask(task)}>
-
-                            {/* name */}
-                            <div className={`${styles.colTitle} ${settings.isStrikethrough && task.is_completed ? styles.strikethrough : ''}`}>
-                                {task.title}
-                            </div>
-                            
-                            {/* des */}
-                            <div className={styles.colDesc}>{task.description}</div>
-                            
-                            {/* deadline */}
-                            <div className={styles.colDate}>
-                                {task.deadline ? formatDateTime(task.deadline) : '-'}
-                            </div>
-                            
-                            {/* checkbox */}
-                            <div className={styles.colCenter} onClick={e => e.stopPropagation()}>
-                                <input 
-                                    type="checkbox" 
-                                    checked={task.is_completed} 
-                                    onChange={() => handleToggleComplete(task)}
-                                    className={styles.checkbox}
-                                />
-                            </div>
-                            
-                            {/* sửa */}
-                            <div className={styles.colCenter}>
-                                <button className={styles.iconBtn} onClick={(e) => openEdit(task, e)}>✏️</button>
-                            </div>
-                        </div>
-                    ))}
-
-                    {/* DÒNG RỖNG (Để giữ form không bị nhảy) */}
-                    {Array.from({ length: emptyRowsCount }).map((_, index) => (
-                        <div key={`empty-${index}`} className={styles.emptyRow}></div>
-                    ))}
-
-                    {/* nếu 0 có task */}
-                    {list.length === 0 && (
-                        <div className={styles.emptyOverlay}>{emptyMessage}</div>
-                    )}
-                </div>
-
-                {/* Phân trang */}
-                {totalPages > 1 && (
-                    <div className={styles.paginationFooter}>
-                        <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className={styles.pageBtn}>◀</button>
-                        <span className={styles.pageInfo}>{currentPage} / {totalPages}</span>
-                        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className={styles.pageBtn}>▶</button>
-                    </div>
-                )}
-            </div>
-        );
-    };
-
-    const renderPagedList = (title, list, page, setPage, emptyMessage) => {
-        const sectionId = title === "Tuần này" ? "week" : "tomorrow";
-
-        const totalPages = Math.ceil(list.length / (cnt-1));
-        const currentItems = list.slice(
-            (page - 1) * (cnt-1),
-            page * (cnt-1)
-        );
-        
-        const emptyRowsCount = Math.max(0, (cnt-1) - currentItems.length);
-
-        return (
-            <div className={styles.halfColumn}>
-                <h3 className={styles.sectionTitle}>{title}</h3>
-
-                <div className={styles.listHeader}>
-                    <div className={styles.headerColLeft}>Tên</div>
-                    
-                    <div className={styles.filterContainer}>
-                        {title === "Tuần này" ? (
-                            <>
-                                {/* week */}
-                                <div 
-                                    className={styles.headerColRight}
-                                    onClick={() => setActiveMenu(activeMenu === 'weekDay' ? null : 'weekDay')}
-                                    style={{cursor: 'pointer', userSelect: 'none'}}
-                                >
-                                    {weekDayFilter === -1 ? 'Cả tuần' : `Thứ ${weekDayFilter === 0 ? 'CN' : weekDayFilter + 1}`} ▼
-                                </div>
-                                
-                                {/* Menu chọn thứ */}
-                                {activeMenu === 'weekDay' && (
-                                <div className={styles.dropdownMenu}>
-                                    <div 
-                                        className={`${styles.menuItem} ${weekDayFilter === -1 ? styles.active : ''}`} 
-                                        onClick={() => { setWeekDayFilter(-1); setActiveMenu(null); }}>Cả tuần</div>
-                                        {[1, 2, 3, 4, 5, 6, 0].map(d => (
-                                        <div key={d} 
-                                            className={styles.menuItem} 
-                                            onClick={() => { setWeekDayFilter(d); setActiveMenu(null); }}>
-                                            {d === 0 ? 'Chủ nhật' : `Thứ ${d + 1}`}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                            </>
-                        ) : (
-                            /* tomorrow */
-                            <div 
-                                className={styles.headerColRight}
-                                onClick={() => handleSort(sectionId)}
-                                style={{cursor: 'pointer', userSelect: 'none'}}
-                                title="Sắp xếp tăng/giảm"
-                            >
-                                Deadline {sorts[sectionId] === 'asc' ? '▲' : '▼'}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className={styles.filterContainer}>
-                        <div 
-                            className={styles.headerColCenter}
-                            onClick={() => setActiveMenu(activeMenu === `status_${sectionId}` ? null : `status_${sectionId}`)}
-                            style={{cursor: 'pointer', userSelect: 'none'}}
-                        >
-                            {filters[sectionId] === 'all' ? 'Trạng thái' : filters[sectionId] === 'pending' ? 'Chưa xong' : 'Đã xong'} ▼
-                        </div>
-
-                        {activeMenu === `status_${sectionId}` && (
-                            <div className={styles.dropdownMenu}>
-                                <div 
-                                    className={`${styles.menuItem} ${filters[sectionId] === 'all' ? styles.active : ''}`} 
-                                    onClick={() => handleFilter(sectionId, 'all')}>Tất cả</div>
-                                <div 
-                                    className={`${styles.menuItem} ${filters[sectionId] === 'pending' ? styles.active : ''}`} 
-                                    onClick={() => handleFilter(sectionId, 'pending')}>Chưa xong</div>
-                                <div 
-                                    className={`${styles.menuItem} ${filters[sectionId] === 'completed' ? styles.active : ''}`} 
-                                    onClick={() => handleFilter(sectionId, 'completed')}>Đã xong</div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                <div className={styles.simpleListBody}>
-                    {currentItems.map(task => (
-                        <div 
-                            key={task.id} 
-                            className={styles.simpleRowGrid}
-                            style={getTaskStyle(task)}
-                            onClick={() => setDetailTask(task)}>
-
-                            {/* name */}
-                            <div className={`${styles.headerColLeft} ${settings.isStrikethrough && task.is_completed ? styles.strikethrough : ''}`}>
-                                {task.title}
-                            </div>
-
-                            {/* deadline */}
-                            <div className={styles.headerColRight}>
-                                {task.deadline ? formatDateTime(task.deadline) : '-'}
-                            </div>
-                            
-                            {/* checkbox */}
-                            <div className={styles.headerColCenter} onClick={e => e.stopPropagation()}>
-                                <input 
-                                    type="checkbox" 
-                                    checked={task.is_completed} 
-                                    onChange={() => handleToggleComplete(task)}
-                                    className={styles.checkbox}
-                                />
-                            </div>
-                        </div>
-                    ))}
-
-                    {Array.from({ length: emptyRowsCount }).map((_, index) => (
-                        <div key={`empty-${index}`} className={styles.simpleEmptyRow}></div>
-                    ))}
-                    
-                    {/* nếu 0 có task */}
-                    {list.length === 0 && (
-                        <div className={styles.emptyOverlay}>{emptyMessage}</div>
-                    )}
-                </div>
-
-                {/* phân trang */}
-                {totalPages > 1 && (
-                    <div className={styles.paginationSimple}>
-                        <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className={styles.pageBtnSmall}>◀</button>
-                        <span className={styles.pageInfoSmall}>{page}/{totalPages}</span>
-                        <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className={styles.pageBtnSmall}>▶</button>
-                    </div>
-                )}
-            </div>
-        );
     };
 
     if (isLoading) {
@@ -599,13 +192,13 @@ const TodoPage = () => {
                 {/* Tasks Navigation */}
                 <div className={styles.navSection}>
                     <div className={styles.navLabel}>TASKS</div>
-                    <div className={`${styles.navItem} ${viewMode === 'list' ? styles.active : ''}`} onClick={() => setViewMode('list')}>
+                    <div className={`${styles.navItem} ${location.pathname.includes('/list') ? styles.active : ''}`} onClick={() => navigate('/todo/list')}>
                         📝 List
                     </div>
-                    <div className={`${styles.navItem} ${viewMode === 'calendar' ? styles.active : ''}`} onClick={() => setViewMode('calendar')}>
+                    <div className={`${styles.navItem} ${location.pathname.includes('/calendar') ? styles.active : ''}`} onClick={() => navigate('/todo/calendar')}>
                         📅 Calendar
                     </div>
-                    <div className={`${styles.navItem} ${viewMode === 'sticky' ? styles.active : ''}`} onClick={() => setViewMode('sticky')}>
+                    <div className={`${styles.navItem} ${location.pathname.includes('/wall') ? styles.active : ''}`} onClick={() => navigate('/todo/wall')}>
                         📌 Sticky Wall
                     </div>
                 </div>
@@ -626,36 +219,13 @@ const TodoPage = () => {
 
             {/* Main content */}
             <div className={styles.mainContent}>
-                {/* List headers */}
-                <div className={styles.mainHeader}>
-                    <h1 className={styles.pageTitle}>
-                        {viewMode === 'list' ? 'List View' : viewMode === 'calendar' ? 'Calendar' : 'Sticky Wall'}
-                    </h1>
-                    <span className={styles.taskCount}>
-                        {weekTasks.length} {weekTasks.length <= 1 ? 'Task' : 'Tasks'}
-                    </span>
-                </div>
-
-                {viewMode === 'list' ? (
-                    <div className={styles.contentGrid}>
-                        {/* 1/2 trên: today */}
-                        <div className={styles.topSection}>
-                            <h3 className={styles.sectionTitle}>Hôm nay ({todayTasks.length})</h3>
-                            {renderTodayTable(todayTasks, "Ngày mới rồi, thêm task thôi")}
-                        </div>
-
-                        {/* 1/2 dưới */}
-                        <div className={styles.bottomSection}>
-                            {/* Trái: mai */}
-                            {renderPagedList("Ngày mai", tomorrowTasks, tomorrowPage, setTomorrowPage, "Không có task nào.")}
-
-                            {/* Phải: tuần */}
-                            {renderPagedList("Tuần này", weekTasks, weekPage, setWeekPage, "Tuần này rảnh rỗi.")}
-                        </div>
-                    </div>
-                ) : (
-                    <div className={styles.placeholderView}>Chức năng đang cập nhật...</div>
-                )}
+                <Outlet 
+                    context={{ 
+                        tasks,searchQuery,
+                        justCreatedId, handleToggleComplete, setDetailTask,
+                        getTaskStyle, openEdit, settings,
+                    }} 
+                />
             </div>
 
             {/* C, U */}

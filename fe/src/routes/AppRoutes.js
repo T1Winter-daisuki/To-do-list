@@ -6,6 +6,9 @@ import LoginPage from '../3pages/auth/LoginPage';
 import RegisterPage from '../3pages/auth/RegisterPage';
 import HomePage from '../3pages/home/HomePage';
 import TodoPage from '../3pages/todo/todoPage';
+import ListView from '../3pages/todo/modules/ListView';
+import CalendarView from '../3pages/todo/modules/CalendarView';
+import StickyWallView from '../3pages/todo/modules/WallView';
 
 const AppRoutes = () => {
   return (
@@ -21,10 +24,17 @@ const AppRoutes = () => {
         path="/todo" 
         element={
           <PrivateRoute>
-             <TodoPage />
+             <TodoPage /> 
           </PrivateRoute>
         } 
-      />
+      >
+          <Route index element={<Navigate to="list" replace />} />
+          
+          <Route path="list" element={<ListView />} />
+          <Route path="calendar" element={<CalendarView />} />
+          <Route path="wall" element={<StickyWallView />} />
+      </Route>
+
       <Route 
         path="/mood" 
         element={
