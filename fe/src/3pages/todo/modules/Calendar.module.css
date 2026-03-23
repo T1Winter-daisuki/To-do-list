@@ -140,6 +140,15 @@
     font-weight: bold;
 }
 
+/* 🌟 Ẩn thanh cuộn (Scrollbar) của lưới lịch nhưng vẫn cho phép cuộn */
+:global(.fc-scroller) {
+    -ms-overflow-style: none;  /* Cho Internet Explorer, Edge */
+    scrollbar-width: none;     /* Cho Firefox */
+}
+:global(.fc-scroller::-webkit-scrollbar) {
+    display: none;             /* Cho Chrome, Safari, và Opera */
+}
+
 .calendarWrapper {
     display: flex; 
     flex-direction: column; 

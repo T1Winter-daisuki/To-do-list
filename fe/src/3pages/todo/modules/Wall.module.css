@@ -1,0 +1,156 @@
+/* Bố cục tổng: Trải rộng toàn màn hình */
+.wallContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.wallHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #DEDED1;
+}
+
+.pageTitle { font-size: 30px; margin: 0; font-weight: 800; color: #444; }
+
+/* 🌟 LƯỚI 4 GÓC PHẦN TƯ (EISENHOWER MATRIX) */
+.matrixGrid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 Cột */
+    grid-template-rows: 1fr 1fr;    /* 2 Hàng */
+    gap: 15px;
+    min-height: 0; /* Giúp lưới co giãn tốt trong flexbox */
+}
+
+/* Từng khu vực Góc phần tư */
+.quadrant {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 2px dashed #C5C7BC;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Tự sinh thanh cuộn nếu dán quá nhiều giấy nhớ */
+    transition: background-color 0.2s ease;
+}
+
+/* Hiệu ứng khi kéo một tờ giấy lơ lửng qua (Drag Over) */
+.quadrant.dragOver {
+    background-color: rgba(182, 174, 159, 0.2);
+    border-style: solid;
+    border-color: #B6AE9F;
+}
+
+/* Tiêu đề của 4 góc */
+.quadrantTitle {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Màu riêng cho từng tiêu đề góc */
+.q1 .quadrantTitle { color: #d9534f; } /* Gấp & Quan trọng (Đỏ) */
+.q2 .quadrantTitle { color: #5cb85c; } /* Không Gấp & Quan trọng (Xanh lá) */
+.q3 .quadrantTitle { color: #f0ad4e; } /* Gấp & Không Quan trọng (Vàng) */
+.q4 .quadrantTitle { color: #888; }    /* Không Gấp & Không Quan trọng (Xám) */
+
+/* Khu vực dán giấy nhớ */
+.notesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-content: flex-start;
+}
+
+/* 🌟 THIẾT KẾ TỜ GIẤY NHỚ (STICKY NOTE) */
+.stickyNote {
+    width: 140px;
+    min-height: 140px;
+    padding: 15px;
+    border-radius: 2px 15px 2px 15px; /* Vát mép tạo cảm giác tờ giấy thật */
+    box-shadow: 3px 4px 10px rgba(0,0,0,0.1);
+    cursor: grab;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hiệu ứng khi đang nhấc tờ giấy lên để kéo */
+.stickyNote:active {
+    cursor: grabbing;
+    transform: scale(1.05) rotate(0deg) !important;
+    box-shadow: 5px 8px 15px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+/* Cây đinh ghim ở giữa mép trên */
+.pin {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    background: radial-gradient(circle at 30% 30%, #ef5350, #b71c1c);
+    border-radius: 50%;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.3);
+}
+
+.noteTitle {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    margin-top: 5px;
+    line-height: 1.3;
+}
+
+.noteDesc {
+    font-size: 12px;
+    color: #555;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Giới hạn mô tả 4 dòng */
+    -webkit-box-orient: vertical;
+}
+
+.noteDate {
+    font-size: 11px;
+    color: rgba(0,0,0,0.5);
+    margin-top: 10px;
+    text-align: right;
+    font-weight: 600;
+}
+
+/* 4 MÀU PASTEL XINH XẮN CHO GIẤY NHỚ */
+.colorYellow { background: linear-gradient(135deg, #fdf5c9, #f9e984); }
+.colorPink { background: linear-gradient(135deg, #fde3e9, #f8c4d0); }
+.colorGreen { background: linear-gradient(135deg, #e4f9e0, #c0e8ba); }
+.colorBlue { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
+
+/* Bẻ góc xoay ngẫu nhiên cho tự nhiên (Ta sẽ gắn class này bằng JS) */
+.rotateLeft1 { transform: rotate(-2deg); }
+.rotateLeft2 { transform: rotate(-4deg); }
+.rotateRight1 { transform: rotate(2deg); }
+.rotateRight2 { transform: rotate(4deg); }
+
+/* Responsive Mobile */
+@media screen and (max-width: 768px) {
+    .matrixGrid {
+        grid-template-columns: 1fr; /* Thành 1 cột kéo dài */
+        grid-template-rows: auto auto auto auto;
+    }
+    .quadrant { min-height: 250px; }
+}
