@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo,useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import styles from '../TodoPage.module.css';
+import styles from './List.module.css';
 import { sameDay, Tomorrow, ThisWeek, formatDateTime } from '../../../utils/dateHelper';
 
 const ListView = () => {

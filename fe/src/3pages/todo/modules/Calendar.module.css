@@ -1,0 +1,234 @@
+:global(.fc) {
+    font-family: 'Segoe UI', sans-serif !important;
+    background: white;
+}
+
+/* Cột ngày hôm nay (Highlight màu vàng nhạt) */
+:global(.fc-day-today) {
+    background-color: rgba(251, 243, 209, 0.3) !important; 
+}
+
+/* Khung hiển thị Header Ngày (CN 22/3...) */
+:global(.fc-col-header-cell) {
+    background-color: #fcfcfc;
+    border-bottom: 1px solid #eee !important;
+}
+:global(.fc-col-header-cell-cushion) {
+    padding: 10px 0;
+    color: #555;
+    font-weight: 600;
+}
+
+/* Cột giờ bên trái */
+:global(.fc-timegrid-axis), :global(.fc-timegrid-slot-label) {
+    background-color: #fafafa;
+    color: #888;
+    font-size: 12px;
+    border: none !important;
+}
+
+/* Task trên lịch */
+:global(.fc-timegrid-event), :global(.fc-daygrid-event) {
+    border-radius: 6px !important;
+    border: none !important;
+    padding: 2px 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin: 1px 2px !important;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+:global(.fc-event:hover) {
+    transform: scale(1.01);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    z-index: 5 !important;
+}
+:global(.fc-event-main) {
+    font-size: 11px;
+    font-weight: 600;
+    color: #333 !important;
+}
+
+/* Đường kẻ ngang chia giờ */
+:global(.fc-theme-standard td), :global(.fc-theme-standard th) {
+    border-color: #f0f0f0 !important; 
+}
+:global(.fc-timegrid-slot-minor) {
+    border-top-style: dashed !important; 
+}
+
+/* Chỉ báo giờ hiện tại (màu đỏ) */
+:global(.fc-timegrid-now-indicator-line) {
+    border-color: #ea4335 !important;
+    border-width: 2px !important;
+}
+:global(.fc-timegrid-now-indicator-arrow) {
+    border-color: #ea4335 !important;
+    border-width: 6px !important;
+}
+
+:global(.react-calendar) {
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+    font-family: inherit !important;
+}
+
+/* Header của Lịch mini (Tháng/Năm) */
+:global(.react-calendar__navigation) {
+    margin-bottom: 10px;
+}
+:global(.react-calendar__navigation button) {
+    min-width: 30px;
+    background: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: #444;
+}
+:global(.react-calendar__navigation button:hover) {
+    background-color: rgba(0,0,0,0.05) !important;
+    border-radius: 6px;
+}
+
+/* Hàng thứ trong tuần (T2, T3...) */
+:global(.react-calendar__month-view__weekdays) {
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+:global(.react-calendar__month-view__weekdays__weekday abbr) {
+    text-decoration: none;
+}
+
+/* Các ô ngày */
+:global(.react-calendar__tile) {
+    padding: 8px 4px;
+    font-size: 12px;
+    background: none;
+    text-align: center;
+    border-radius: 50% !important; 
+    color: #444;
+    transition: 0.2s;
+    height: 35px;
+    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px auto; 
+}
+:global(.react-calendar__tile:hover) {
+    background-color: rgba(0,0,0,0.05) !important;
+}
+
+/* Thứ 7, CN màu đỏ */
+:global(.react-calendar__month-view__days__day--weekend) {
+    color: #d9534f;
+}
+
+/* Ngày hiện tại (Hình tròn xanh) */
+:global(.react-calendar__tile--now) {
+    background: #007bff !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Ngày đang được click chọn (Hình tròn màu chủ đạo) */
+:global(.react-calendar__tile--active) {
+    background: #B6AE9F !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.calendarWrapper {
+    display: flex; 
+    flex-direction: column; 
+    height: 100%;
+}
+
+.calendarBody {
+    flex: 1;
+    min-height: 0; /* Rất quan trọng để nội dung không bị tràn */
+    margin-top: 10px;
+}
+
+/* Header chuẩn giống ListView */
+.mainHeader { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; /* Căn giữa theo chiều dọc cho cân với các nút */
+    margin-bottom: 20px; 
+    padding-bottom: 10px; 
+    border-bottom: 2px solid #DEDED1; 
+}
+
+/* Biến cái Dropdown to ra và làm nó trông giống 1 cái Tiêu đề (pageTitle) */
+.pageTitleSelect { 
+    font-size: 30px; 
+    margin: 0; 
+    font-weight: 800; 
+    color: #444; 
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 0;
+}
+.pageTitleSelect:hover {
+    color: #B6AE9F;
+}
+
+.taskCount { 
+    font-size: 20px; 
+    color: #B6AE9F; 
+    font-weight: 700; 
+}
+
+.pageBtn { 
+    height: 30px; 
+    min-width: 30px;
+    border: 1px solid #ddd; 
+    background: white; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 13px; 
+    color: #555; 
+    transition: 0.2s; 
+}
+.pageBtn:hover { 
+    background-color: #B6AE9F; 
+    color: white; 
+    border-color: #B6AE9F; 
+}
+
+@media screen and (max-width: 768px) {
+    /* Ép Header gập xuống 2 dòng (Lưu ý dùng đúng class .mainHeader) */
+    .mainHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        height: auto;
+    }
+    
+    .viewSelect { font-size: 22px; } 
+    
+    .taskCount {
+        align-self: flex-end; 
+        font-size: 16px;
+    }
+
+    .pageBtn { padding: 0 8px; height: 32px; font-size: 12px; }
+    
+    :global(.fc-timegrid-slot-label) { font-size: 10px; }
+
+    /* 🌟 FIX LỖI TÀNG HÌNH: Ép cứng chiều cao cho thẻ bọc lịch */
+    .calendarBody {
+        height: 600px; /* Bắt buộc phải có con số cụ thể trên mobile */
+        min-height: 600px;
+        width: 100%;
+    }
+}

@@ -1,641 +1,106 @@
-.container {
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
-    font-family: 'Segoe UI', sans-serif;
-    color: #444;
-    /* overflow: hidden; */
-    background-color: #FBF3D1;
-}
+.container { display: flex; min-height: 100vh; width: 100%; font-family: 'Segoe UI', sans-serif; color: #444; background-color: #FBF3D1; }
 
 /* menu */
-.sidebar {
-    background-color: #DEDED1;
-    border-right: 1px solid #C5C7BC;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    min-height: 100vh;
-    min-width: 200px;
-    flex-shrink: 0;
-}
-
-.menuHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.menuTitle {
-    font-size: 24px;
-    font-weight: 800;
-    color: #444;
-}
-
-.addBtn {
-    width: 35px; height: 35px;
-    border: 1px solid #C5C7BC;
-    background: #fff;
-    font-size: 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-.addBtn:hover { 
-    background: #B6AE9F; color: white; 
-}
-
-.searchBox input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #C5C7BC;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    outline: none;
-    box-sizing: border-box;
-}
-
-.navSection { 
-    margin-bottom: 30px; 
-}
-
-.navLabel {
-    font-size: 12px; font-weight: 700; color: #777;
-    margin-bottom: 10px; letter-spacing: 1px;
-}
-
-.navItem {
-    padding: 10px; margin-bottom: 5px;
-    border-radius: 6px; cursor: pointer;
-    font-weight: 600; color: #555;
-    transition: 0.2s;
-}
-.navItem:hover { 
-    background: rgba(255,255,255,0.5); 
-}
-.navItem.active {
-    background-color: #B6AE9F;
-    color: white;
-}
-
-.sidebarFooter { 
-    margin-top: auto; border-top: 1px solid #C5C7BC; padding-top: 15px; 
-}
-
-.settingsBtn {
-    background: none; border: none; font-size: 16px; cursor: pointer; color: #555;
-}
-
-.resizer {
-    position: absolute; right: 0; top: 0; bottom: 0;
-    width: 5px; cursor: col-resize; z-index: 10;
-}
-.resizer:hover { 
-    background: #B6AE9F; 
-}
+.sidebar { background-color: #DEDED1; border-right: 1px solid #C5C7BC; padding: 20px; display: flex; flex-direction: column; position: relative; min-height: 100vh; min-width: 200px; flex-shrink: 0; }
+.menuHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.menuTitle { font-size: 24px; font-weight: 800; color: #444; }
+.addBtn { width: 35px; height: 35px; border: 1px solid #C5C7BC; background: #fff; font-size: 20px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+.addBtn:hover { background: #B6AE9F; color: white; }
+.searchBox input { width: 100%; padding: 10px; border: 1px solid #C5C7BC; border-radius: 8px; margin-bottom: 20px; outline: none; box-sizing: border-box; }
+.navSection { margin-bottom: 30px; }
+.navLabel { font-size: 12px; font-weight: 700; color: #777; margin-bottom: 10px; letter-spacing: 1px; }
+.navItem { padding: 10px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; font-weight: 600; color: #555; transition: 0.2s; }
+.navItem:hover { background: rgba(255,255,255,0.5); }
+.navItem.active { background-color: #B6AE9F; color: white; }
+.sidebarFooter { margin-top: auto; border-top: 1px solid #C5C7BC; padding-top: 15px; }
+.settingsBtn { background: none; border: none; font-size: 16px; cursor: pointer; color: #555; }
+.resizer { position: absolute; right: 0; top: 0; bottom: 0; width: 5px; cursor: col-resize; z-index: 10; }
+.resizer:hover { background: #B6AE9F; }
 
 /* main content */
-.mainContent {
-    flex: 1;
-    padding: 20px 30px;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    overflow: hidden;
-    height: auto;
-    box-sizing: border-box;
-}
-
-.mainHeader {
-    display: flex; justify-content: space-between; align-items: flex-end;
-    margin-bottom: 20px; padding-bottom: 10px;
-    border-bottom: 2px solid #DEDED1;
-}
-
-.pageTitle { font-size: 30px; margin: 0; font-weight: 800; color: #444; }
-.taskCount { font-size: 20px; color: #B6AE9F; font-weight: 700; }
-
-.contentGrid {
-    display: flex; 
-    flex-direction: column; 
-    height: auto; 
-    gap: 20px;
-}
-
-.sectionTitle {
-    font-size: 18px; margin-bottom: 10px; color: #444; border-bottom: 1px solid #eee; padding-bottom: 5px;
-}
-
-/* Today */
-.topSection {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.todaySection {
-    background: white;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.gridHeader, .gridRow {
-    display: grid;
-    grid-template-columns: 0.7fr 3fr 1fr 1fr 1fr;
-    align-items: center;
-    padding: 0 15px;
-}
-
-.gridBody {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    position: relative;
-}
-.gridHeader {
-    background-color: #fff;
-    border-bottom: 2px solid #f0f0f0;
-    height: 50px;
-    font-weight: 700;
-    color: #888;
-    font-size: 13px;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-.gridRow {
-    height: 55px;
-    border-bottom: 1px solid #f9f9f9;
-    cursor: pointer;
-    transition: 0.1s;
-    font-size: 14px;
-    color: #444;
-}
-.gridRow:hover {
-    background-color: rgba(0,0,0,0.02);
-    transform: scale(1.005);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.colTitle {
-    color: #666;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    padding-right: 15px;
-    font-size: 13px;
-}
-.colDesc {
-    color: #666;
-    font-size: 13px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    padding-right: 15px;
-}
-.colDate {
-    font-size: 13px;
-    color: #666;
-}
-.colCenter {
-    display: flex;
-    color: #666;
-    justify-content: center;
-}
-
-/* css hỗ trợ settings */
-.strikethrough { text-decoration: line-through; opacity: 0.5; }
-.checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: #28a745; }
-.iconBtn { border: none; background: none; cursor: pointer; font-size: 16px; opacity: 0.5; }
-.iconBtn:hover { opacity: 1; transform: scale(1.2); }
-
-.emptyRow {
-    height: 55px; /* để giữ form nếu nd null */
-}
-
-/* phân trang */
-.paginationFooter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
-    height: 40px;
-}
-
-.pageBtn {
-    width: 28px; height: 28px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
-    color: #555;
-    transition: 0.2s;
-}
-.pageBtn:hover:not(:disabled) {
-    background-color: #B6AE9F;
-    color: white;
-    border-color: #B6AE9F;
-}
-.pageBtn:disabled {
-    opacity: 0.3; cursor: default; background: #f5f5f5;
-}
-
-.pageInfo { 
-    font-size: 13px; color: #666; font-weight: 500; 
-}
-
-/* Tmr, week */
-.bottomSection {
-    display: flex; 
-    gap: 20px; 
-    margin-top: 20px;
-    min-height: 300px;
-    flex-wrap: wrap;
-}
-
-.halfColumn {
-    flex: 1 1 400px;
-    min-width: 300px;
-    display: flex; 
-    flex-direction: column;
-    justify-content: space-between;
-    background: #fff;
-    border: 1px solid #eee; 
-    border-radius: 8px; 
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-    height: auto;
-}
-
-.listHeader, .simpleRowGrid {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr; 
-    align-items: center;
-    padding: 0 15px;
-    box-sizing: border-box;
-    gap: 10px;
-}
-.simpleRowGrid div, 
-.listHeader div {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding-right: 5px;
-}
-
-.simpleListBody {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    position: relative;
-    justify-content: flex-start;
-}
-.listHeader {
-    height: 40px;
-    border-bottom: 2px solid #f5f5f5;
-    margin-bottom: 10px;
-    font-weight: 700;
-    font-size: 13px;
-    color: #999;
-}
-.simpleRowGrid {
-    height: 45px;
-    border-radius: 6px;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
-}
-.simpleRowGrid:hover {
-    background-color: rgba(0,0,0,0.02);
-    transform: scale(1.005);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.headerColLeft {
-    text-align: center;
-    padding-left: 0;
-    font-size: 13px;
-    color: #666;
-}
-.headerColRight {
-    font-size: 13px;
-    text-align: center;
-    color: #666;
-}
-.headerColCenter {
-    text-align: center;
-    color: #666;
-}
-
-/* Dòng rỗng (Dummy) */
-.simpleEmptyRow {
-    height: 42px;
-}
-
-/* Overlay khi không có task */
-.emptyOverlay {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ccc;
-    font-style: italic;
-    font-size: 14px;
-    width: 100%;
-    text-align: center;
-}
-
-/* PHÂN TRANG NHỎ */
-.paginationSimple {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 15px;
-    padding-top: 10px;
-    border-top: 1px solid #f5f5f5;
-    height: 30px;
-}
-
-.pageBtnSmall {
-    width: 24px; height: 24px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: #555;
-    transition: 0.2s;
-}
-.pageBtnSmall:hover:not(:disabled) {
-    background: #B6AE9F; color: white; border-color: #B6AE9F;
-}
-.pageBtnSmall:disabled { opacity: 0.3; cursor: default; }
-
-.pageInfoSmall { font-size: 12px; color: #999; }
+.mainContent { flex: 1; padding: 20px 30px; display: flex; flex-direction: column; background-color: #fff; overflow: hidden; height: auto; box-sizing: border-box; }
 
 /* --- MODALS & POPUPS --- */
-.modalOverlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4); backdrop-filter: blur(2px);
-    display: flex; justify-content: center; align-items: center; z-index: 1000;
-}
-
-.modalContent, .settingsModal, .detailCard {
-    background: white; 
-    padding: 25px; 
-    border-radius: 12px;
-    width: 450px; 
-    max-width: 90%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-/* Detail Popup Style */
+.modalOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.modalContent, .settingsModal, .detailCard { background: white; padding: 25px; border-radius: 12px; width: 450px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 .detailCard { border-top: 5px solid #B6AE9F; }
 .detailTitle { margin-top: 0; font-size: 22px; color: #333; }
 .detailMeta { display: flex; gap: 15px; margin-bottom: 15px; font-size: 13px; color: #666; }
 .detailTag { background: #DEDED1; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
 .detailDesc { background: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 20px; min-height: 60px; }
-
-/* Form Elements */
-.inputField, .textArea {
-    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;
-    margin-bottom: 15px; box-sizing: border-box; font-family: inherit;
-}
+.inputField, .textArea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; font-family: inherit; }
 .row { display: flex; gap: 15px; margin-bottom: 15px; }
-
 .modalActions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
-.modalActions button {
-    padding: 8px 15px; border: 1px solid #ddd; background: white;
-    border-radius: 4px; cursor: pointer; font-weight: 600;
-}
+.modalActions button { padding: 8px 15px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; font-weight: 600; }
 .saveBtn { background: #B6AE9F !important; color: white; border: none !important; }
 
-.checkbox {
-    width: 16px; height: 16px; cursor: pointer; accent-color: #28a745;
-}
+/* Checkbox dùng chung cho Popup tạo task */
+.checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: #28a745; }
 
-/* Container để định vị menu con */
-.filterContainer {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%; 
-}
-
-/* Menu thả xuống */
-.dropdownMenu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: white;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border-radius: 8px;
-    z-index: 999;
-    min-width: 160px;
-    padding: 5px 0;
-    margin-top: 5px;
-    bottom: auto;
-    overflow-y: auto;
-    max-height: 250px;
-}
-
-.menuItem {
-    padding: 10px 15px;
-    font-size: 13px;
-    color: #444;
-    cursor: pointer;
-    text-align: left;
-    transition: 0.2s;
-    display: flex;
-    justify-content: space-between;
-}
-.menuItem:hover {
-    background-color: #FBF3D1; 
-}
-
+/* Responsive Layout */
 @media screen and (max-width: 768px) {
+    .container { display: flex; width: 100%; flex-direction: column; overflow-x: hidden; }
+    .sidebar { width: 100%; min-width: 100%; min-height: auto; padding: 10px 15px; border-right: none; border-bottom: 2px solid #DEDED1; box-sizing: border-box; }
+    .menuHeader { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px; }
+    .searchBox { width: 100%; margin-bottom: 15px; box-sizing: border-box; }
+    .searchBox input { width: 100%; padding: 10px; box-sizing: border-box; margin: 0; }
+    .navSection { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 0; }
+    .navItem { flex: 1; text-align: center; white-space: nowrap; font-size: 13px; padding: 8px 5px; }
+    .navLabel, .sidebarFooter { display: none; }
+    .mainContent { padding: 10px; width: 100%; box-sizing: border-box; }
+    .container { flex-direction: column; overflow-x: hidden; }
     
-    /* --- 1. SỬA LỖI MENU & SEARCH BỊ CHÈN --- */
-    .container {
-        display: flex;
-        width: 100%;
-        flex-direction: column;
-        overflow-x: hidden;
+    /* Thu gọn Sidebar */
+    .sidebar { width: 100%; min-width: 100%; min-height: auto; padding: 15px; border-right: none; border-bottom: 2px solid #DEDED1; box-sizing: border-box; }
+    .menuHeader { margin-bottom: 15px; }
+    
+    /* Dàn hàng ngang cho List | Calendar | Sticky Wall */
+    .navSection { 
+        display: flex; 
+        flex-direction: row; 
+        justify-content: center; /* Căn giữa các tab */
+        gap: 10px; 
+        flex-wrap: wrap; 
+        margin-bottom: 0; 
     }
-
-    .sidebar {
-        width: 100%;
-        min-width: 100%;
-        min-height: auto;
-        padding: 10px 15px;
-        border-right: none;
-        border-bottom: 2px solid #DEDED1;
-        box-sizing: border-box;
-    }
-
-    /* Header Menu: Chữ MENU và Nút + */
-    .menuHeader {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    /* Thanh tìm kiếm: Đẩy xuống dòng và full width */
-    .searchBox {
-        width: 100%;
-        margin-bottom: 15px;
-        box-sizing: border-box;
-    }
-    .searchBox input {
-        width: 100%; /* Chiếm hết chiều ngang */
-        padding: 10px;
-        box-sizing: border-box; /* Ngăn tràn lề */
-        margin: 0;
-    }
-
-    /* Menu điều hướng ngang */
-    .navSection {
-        display: flex;
-        gap: 5px;
-        overflow-x: auto;
-        padding-bottom: 5px;
+    .navItem { 
+        flex: 1; 
+        text-align: center; 
+        white-space: nowrap; 
+        font-size: 14px; 
+        padding: 10px 5px; 
         margin-bottom: 0;
     }
-    .navItem {
-        flex: 1;
-        text-align: center;
-        white-space: nowrap;
-        font-size: 13px;
-        padding: 8px 5px;
-    }
-    .navLabel, .sidebarFooter { display: none; }
+    .navLabel, .sidebarFooter, .searchBox { display: none; } /* Ẩn bớt râu ria cho gọn */
 
-
-    /* --- 2. SỬA LỖI NỘI DUNG CHÍNH --- */
-    .mainContent {
-        padding: 10px;
+    /* 🌟 Căn giữa và thêm hiệu ứng chuyển động cho Lịch Mini */
+    .miniCalendarContainer {
         width: 100%;
-        box-sizing: border-box;
-    }
-
-
-    /* --- 3. SỬA LỖI BẢNG --- */
-    .gridHeader, .gridRow, 
-    .listHeader, .simpleRowGrid {
-        display: grid;
-        grid-template-columns: 1fr 2fr 1fr;
-        gap: 5px;
-        padding: 0 5px;
-        align-items: center;
-        box-sizing: border-box;
-    }
-
-    /* HIỆN: Cột 1 (Title) */
-    .gridRow > div:nth-child(1), .gridHeader > div:nth-child(1) {
-        display: block !important; 
-        font-size: 13px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    /* ẨN: Cột 2 (Mô tả) */
-    .colDesc, .gridHeader > div:nth-child(2) { 
-        display: none !important; 
-    }
-    /* HIỆN: Cột 3 (Date/Deadline) - Căn giữa */
-    .gridRow > div:nth-child(3), .gridHeader > div:nth-child(3) {
-        text-align: center;
-        color: #888;
-    }
-    /* HIỆN: Cột 4 (Checkbox) - Căn phải */
-    /* Lưu ý: Checkbox nằm ở div thứ 4 trong JSX của bạn */
-    .gridRow > div:nth-child(4), .gridHeader > div:nth-child(4) {
         display: flex;
         justify-content: center;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed #ccc;
+        
+        /* Hiệu ứng trượt và mờ dần khi xuất hiện */
+        animation: slideDownFade 0.3s ease-out forwards;
+        transform-origin: top;
     }
-    /* ẨN: Cột 5 (Nút Sửa & Filter Trạng thái ở Header) */
-    .gridRow > div:nth-child(5), .gridHeader > div:nth-child(5) {
-        display: none !important;
+
+    /* Khai báo khung hình chuyển động (Animation Keyframes) */
+    @keyframes slideDownFade {
+        from {
+            opacity: 0;
+            transform: translateY(-15px) scaleY(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scaleY(1);
+        }
     }
     
-    /* Tinh chỉnh font chữ bảng dưới */
-    .simpleRowGrid > div:nth-child(1), .headerColLeft {
-        font-size: 13px !important;
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis;
-    }
-    
-    .simpleRowGrid > div:nth-child(2), .headerColRight {
-        text-align: center !important;
-    }
+    /* Ép size lịch mini trên mobile */
+    :global(.react-calendar) { max-width: 300px; margin: 0 auto; }
 
-    /* Fix cột Checkbox bảng dưới (div cuối cùng) */
-    .simpleRowGrid > div:last-child {
-        justify-content: flex-end;
-    }
-
-    /* Xếp chồng 2 bảng dưới */
-    .bottomSection {
-        flex-direction: column;
-        gap: 20px;
-    }
-    .halfColumn {
-        width: 100%;
-        min-width: 100%;
-        margin: 0;
-        box-sizing: border-box;
-    }
-}
-
-@media screen and (max-width: 1200px) {
-    .gridHeader, .gridRow, .simpleRowGrid {
-        grid-template-columns: 1fr 2fr 1fr;
-        gap: 10px;
-        padding: 0 10px;
-    }
-
-    /* Ẩn Mô tả (.colDesc) */
-    .colDesc { 
-        display: none !important; 
-    }    
-    /* Ẩn Trạng thái (Cột thứ 5 - Text Pending/Completed) */
-    .gridHeader > div:nth-child(5),
-    .gridRow > .colCenter:nth-child(5) {
-        display: none !important;
-    }
-    /* 3. TINH CHỈNH TEXT */
-    /* Tên Task: Giới hạn 1 dòng, hiện dấu ... */
-    .colTitle {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 14px;
-        padding-right: 5px;
-    }
-
-    /* Căn chỉnh Deadline (Cột 3) */
-    .gridRow > div:nth-child(3), /* Nhắm vào div deadline */
-    .gridHeader > div:nth-child(3) {
-        text-align: center;
-        font-size: 12px;
-        color: #888;
-    }
-
-    /* Căn chỉnh Nút Sửa (Cột 4 - Cuối cùng) */
-    .gridRow > div:last-child {
-        display: flex;
-        justify-content: flex-end; /* Đẩy sát lề phải cho đẹp */
-    }
+    .mainContent { padding: 15px 10px; width: 100%; box-sizing: border-box; }
 }
