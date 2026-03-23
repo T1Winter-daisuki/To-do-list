@@ -5,6 +5,8 @@ import { useTasks } from '../../5hooks/Tasks';
 import styles from './TodoPage.module.css';
 import { useAuth } from '../../2context/AuthContext';
 import { outOfDate, toLocalISOString, formatDateTime } from '../../utils/dateHelper';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const TodoPage = () => {
     const navigate = useNavigate();
@@ -40,9 +42,9 @@ const TodoPage = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     
     // setup popup
-    const Popup = (datePreset = null) => {
-        const startDate = datePreset ? new Date(datePreset) : new Date();
-        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+    const Popup = (start = null, end = null) => {
+        const startDate = start ? new Date(start) : new Date();
+        const endDate = end ? new Date(end) : new Date(startDate.getTime() + 60 * 60 * 1000);
 
         setFormData({
             title: '',
@@ -114,7 +116,6 @@ const TodoPage = () => {
         }
     };
 
-
     // D
     const [detailTask, setDetailTask] = useState(null);
     const [deleteTaskId, setDeleteTaskId] = useState(null);
@@ -168,6 +169,9 @@ const TodoPage = () => {
         return { backgroundColor: settings.colorPending };
     };
 
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [activeStartDate, setActiveStartDate] = useState(new Date());
+
     if (isLoading) {
         return (
             <div style={{ 
@@ -215,6 +219,17 @@ const TodoPage = () => {
                         📌 Sticky Wall
                     </div>
                 </div>
+                {location.pathname.includes('/calendar') && (
+                        <div className={styles.miniCalendarContainer}>
+                            <Calendar 
+                                value={selectedDate} 
+                                onChange={setSelectedDate}
+                                activeStartDate={activeStartDate}
+                                onActiveStartDateChange={({ activeStartDate }) => setActiveStartDate(activeStartDate)}
+                                className={styles.miniCalendar} 
+                            />
+                        </div>
+                    )}
 
                 {/* Tags */}
                 <div className={styles.navSection}>
@@ -234,7 +249,7 @@ const TodoPage = () => {
             <div className={styles.mainContent}>
                 <Outlet 
                     context={{ 
-                        tasks,searchQuery,
+                        tasks, searchQuery, Popup, selectedDate, setSelectedDate, setActiveStartDate,
                         justCreatedId, handleToggleComplete, setDetailTask,
                         getTaskStyle, openEdit, settings,
                     }} 
