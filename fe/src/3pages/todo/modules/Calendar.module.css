@@ -234,10 +234,13 @@
     
     :global(.fc-timegrid-slot-label) { font-size: 10px; }
 
-    /* 🌟 FIX LỖI TÀNG HÌNH: Ép cứng chiều cao cho thẻ bọc lịch */
+    .calendarWrapper {
+        height: calc(100vh - 90px);
+    }
+
     .calendarBody {
-        height: 600px; /* Bắt buộc phải có con số cụ thể trên mobile */
-        min-height: 600px;
+        height: 100%;
+        min-height: 400px;
         width: 100%;
     }
 }

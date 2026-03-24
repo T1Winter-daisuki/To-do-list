@@ -152,6 +152,46 @@
 }
 
 @media screen and (max-width: 768px) {
-    .matrixGrid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 300px); }
-    .quadrant { min-height: 300px; }
+    /* 1. GIỮ NGUYÊN LƯỚI 2x2 NHƯ TRÊN PC */
+    .matrixGrid { 
+        grid-template-columns: 1fr 1fr; 
+        grid-template-rows: 1fr 1fr; 
+        gap: 8px;
+        min-height: calc(100vh - 150px);
+    }
+    
+    /* 2. Tối ưu lại Ô chứa và Tiêu đề */
+    .quadrant { padding: 5px; border-width: 1px; height: 100%; }
+    .quadrantTitle { font-size: 12px; padding: 5px; margin-bottom: 5px; }
+    .quadrantTitle span { font-size: 9px !important; display: block; margin-top: 2px; }
+
+    /* 3. THU NHỎ GIẤY NHỚ LẠI ĐỂ VỪA VẶN MÀN HÌNH ĐIỆN THOẠI */
+    .stickyNote {
+        width: 75px;
+        height: 75px;
+        padding: 8px 6px 6px 6px;
+        border-radius: 2px 8px 2px 8px;
+    }
+    
+    /* Tối ưu chữ bên trong giấy nhớ */
+    .noteTitle { font-size: 10px; margin-top: 2px; margin-bottom: 2px; }
+    .noteDesc { 
+        font-size: 9px; 
+        -webkit-line-clamp: 2; /* Trên mobile chỉ hiện 2 dòng mô tả thôi */
+        line-clamp: 2; 
+    }
+    .noteDate { font-size: 8px; margin-top: auto; }
+    
+    /* Thu nhỏ cây đinh ghim */
+    .pin { width: 10px; height: 10px; top: -5px; }
+    
+    /* Hiệu ứng khi Double Click (Chọn) trên Mobile */
+    .selectedOverlay { font-size: 35px; border-width: 2px; }
+    
+    /* 4. Chỉnh lại phần Header cho gọn */
+    .wallHeader { flex-direction: column; align-items: flex-start; gap: 10px; padding-bottom: 5px; }
+    .pageTitle { font-size: 24px; }
+    .headerActions { width: 100%; display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-start; }
+    .selectedText { width: 100%; font-size: 12px; }
+    .completeBtn, .deleteBtn { padding: 5px 10px; font-size: 11px; flex: 1; justify-content: center; }
 }
