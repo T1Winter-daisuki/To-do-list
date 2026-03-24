@@ -61,6 +61,44 @@
 .pageBtnSmall:disabled { opacity: 0.3; cursor: default; }
 .pageInfoSmall { font-size: 12px; color: #999; }
 
+/* --- CÁC NÚT ACTION TRÊN HEADER --- */
+.headerActions { display: flex; align-items: center; gap: 15px; }
+.selectedText { font-size: 14px; color: #888; font-weight: 500; }
+.completeBtn {
+    background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+    padding: 6px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.2s;
+}
+.completeBtn:hover { background-color: #28a745; color: white; }
+.deleteBtn {
+    background-color: #f8d7da; color: #d9534f; border: 1px solid #f5c6cb;
+    padding: 6px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.2s;
+}
+.deleteBtn:hover { background-color: #d9534f; color: white; }
+
+/* --- MODAL XÁC NHẬN XÓA --- */
+.modalOverlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(2px);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+.confirmModal {
+    background: white; padding: 25px 20px; border-radius: 12px; width: 320px; max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center;
+}
+.confirmTitle { margin-top: 0; font-size: 20px; color: #444; font-weight: 700; margin-bottom: 15px; }
+.confirmText { font-size: 14px; color: #666; margin-bottom: 25px; }
+.modalActions { display: flex; justify-content: center; gap: 15px; }
+.cancelBtn { padding: 8px 25px; border: 1px solid #ccc; background: white; border-radius: 6px; cursor: pointer; font-weight: 600; color: #333; transition: 0.2s; }
+.cancelBtn:hover { background: #f5f5f5; border-color: #bbb; }
+.confirmDeleteBtn { padding: 8px 25px; border: none; background: #d9534f; border-radius: 6px; cursor: pointer; font-weight: 600; color: white; transition: 0.2s; }
+.confirmDeleteBtn:hover { background: #c9302c; }
+
+.selectedRow {
+    background-color: rgba(217, 83, 79, 0.1) !important; /* Nền đỏ nhạt */
+    outline: 2px dashed rgba(217, 83, 79, 0.5); /* Viền đứt đoạn */
+    transition: all 0.2s ease;
+}
+
 /* TABLET (Dưới 1200px) */
 @media screen and (max-width: 1200px) {
     .gridHeader, .gridRow, .simpleRowGrid { grid-template-columns: 1fr 2fr 1fr; gap: 10px; padding: 0 10px; }

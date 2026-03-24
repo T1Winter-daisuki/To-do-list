@@ -72,6 +72,10 @@ const CalendarView = () => {
             calendarApi.gotoDate(selectedDate);
         }
     }, [selectedDate]);
+    // Kéo lịch đến ngay khung giờ hiện tại
+    const currentHour = new Date().getHours();
+    const scrollHour = Math.max(0, currentHour - 1); 
+    const initialScrollTime = `${scrollHour.toString().padStart(2, '0')}:00:00`;
 
     return (
         <div className={styles.calendarWrapper}>
@@ -131,9 +135,10 @@ const CalendarView = () => {
                     slotMinTime="00:00:00"
                     slotMaxTime="23:59:00"
                     allDaySlot={false}
-                    contentHeight="auto"
                     height="100%"
                     locale="vi"
+                    nowIndicator={true}
+                    scrollTime={initialScrollTime}
 
                     datesSet={(dateInfo) => {
                         if (calendarRef.current && setActiveStartDate) {

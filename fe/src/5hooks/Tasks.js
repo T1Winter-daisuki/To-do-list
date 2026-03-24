@@ -6,7 +6,7 @@ export const useTasks = (userId) => {
     const [tasks, setTasks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // D
+    // R
     const fetchTasks = useCallback(async () => {
         if (!userId) return;
         setIsLoading(true);
@@ -73,11 +73,25 @@ export const useTasks = (userId) => {
         }
     };
 
+    const handleDeleteMultipleTasks = async (taskIds) => {
+        try {
+            await Promise.all(taskIds.map(id => taskServices.deleteTask(id)));
+            setTasks(prev => prev.filter(t => !taskIds.includes(t.id)));
+            toast.success(`Đã xóa thành công ${taskIds.length} task!`);
+            return true;
+        } catch (error) {
+            const msg = error.response?.data?.message || error.message;
+            toast.error("Lỗi khi xóa nhiều task: " + msg);
+            return false;
+        }
+    };
+
     return {
         tasks,
         isLoading,
         handleCreateOrUpdateTask,
         handleToggleComplete,
-        handleDeleteTask
+        handleDeleteTask,
+        handleDeleteMultipleTasks
     };
 };

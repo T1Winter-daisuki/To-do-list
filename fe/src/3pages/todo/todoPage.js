@@ -139,7 +139,7 @@ const TodoPage = () => {
     const { user } = useAuth();
     const { 
         tasks, isLoading, 
-        handleCreateOrUpdateTask, handleToggleComplete, handleDeleteTask 
+        handleCreateOrUpdateTask, handleToggleComplete, handleDeleteTask, handleDeleteMultipleTasks
     } = useTasks(user?.id);
 
     // task colors
@@ -250,7 +250,7 @@ const TodoPage = () => {
                 <Outlet 
                     context={{ 
                         tasks, searchQuery, Popup, selectedDate, setSelectedDate, setActiveStartDate,
-                        justCreatedId, handleToggleComplete, setDetailTask,
+                        justCreatedId, handleToggleComplete, setDetailTask, handleDeleteMultipleTasks,
                         getTaskStyle, openEdit, settings,
                     }} 
                 />

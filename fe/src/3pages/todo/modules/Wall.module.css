@@ -1,0 +1,197 @@
+.wallContainer { display: flex; flex-direction: column; height: 100%; padding: 10px; box-sizing: border-box; }
+.wallHeader { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #DEDED1; }
+.pageTitle { font-size: 30px; margin: 0; font-weight: 800; color: #444; }
+
+.headerActions { display: flex; align-items: center; gap: 15px; }
+.selectedText { font-size: 14px; color: #888; font-weight: 500; }
+.deleteBtn {
+    background-color: #f8d7da; color: #d9534f; border: 1px solid #f5c6cb;
+    padding: 6px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;
+    display: flex; align-items: center; gap: 5px; transition: 0.2s;
+}
+.deleteBtn:hover { background-color: #d9534f; color: white; }
+
+/* --- LƯỚI MA TRẬN --- */
+.matrixGrid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 15px; min-height: 0; }
+
+.quadrant { 
+    background-color: rgba(255, 255, 255, 0.4); /* Nền bảng trắng mờ */
+    border: 2px dashed #C5C7BC; 
+    border-radius: 12px; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+    transition: 0.2s; 
+    position: relative; 
+}
+.quadrant.dragOver { border-color: #B6AE9F; background-color: rgba(182, 174, 159, 0.2); }
+
+/* 🌟 TIÊU ĐỀ CÓ MÀU NỀN TÁCH BIỆT */
+.quadrantTitle { 
+    font-size: 16px; 
+    font-weight: 800; 
+    text-align: center; 
+    padding: 12px 10px; 
+    border-bottom: 2px dashed rgba(0,0,0,0.1); 
+    z-index: 2; 
+    position: relative; 
+}
+
+/* Đổ màu nền nhạt cho từng Header */
+.q1 .quadrantTitle { background-color: #fdeaea; color: #d9534f; } /* Đỏ nhạt */
+.q2 .quadrantTitle { background-color: #eef9ee; color: #5cb85c; } /* Xanh nhạt */
+.q3 .quadrantTitle { background-color: #fdf6ea; color: #f0ad4e; } /* Vàng nhạt */
+.q4 .quadrantTitle { background-color: #f5f5f5; color: #888; }    /* Xám nhạt */ 
+
+/* --- KHU VỰC DÁN GIẤY (TỰ DO TUYỆT ĐỐI) --- */
+.notesContainer {
+    flex: 1;
+    position: relative; /* 🌟 Biến thành khung tọa độ */
+    width: 100%;
+    height: 100%;
+}
+
+.stickyNote {
+    position: absolute; /* 🌟 Rút giấy ra khỏi luồng văn bản, lơ lửng tự do */
+    width: 130px;
+    height: 130px; /* Cố định kích thước để không phình to */
+    padding: 12px 15px 10px 15px;
+    border-radius: 2px 15px 2px 15px; 
+    box-shadow: 2px 4px 8px rgba(0,0,0,0.15);
+    cursor: grab;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s, z-index 0.2s;
+    z-index: 10; 
+}
+
+/* Khi lướt chuột qua: Phóng to và nhảy lên trên cùng */
+.stickyNote:hover {
+    z-index: 50; 
+    transform: scale(1.1) rotate(0deg) !important; 
+    box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+}
+
+.stickyNote:active { cursor: grabbing; z-index: 60; }
+
+/* 🌟 HIỆU ỨNG KHI DOUBLE CLICK (ĐÃ CHỌN) */
+.selectedOverlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.5);
+    border: 3px dashed #d9534f;
+    border-radius: 2px 15px 2px 15px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 60px; color: #d9534f; font-weight: bold;
+    z-index: 5; pointer-events: none; /* Xuyên thấu click */
+}
+
+/* Đinh ghim */
+.pin { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 14px; height: 14px; background: radial-gradient(circle at 30% 30%, #ef5350, #b71c1c); border-radius: 50%; box-shadow: 1px 2px 3px rgba(0,0,0,0.3); z-index: 6; }
+
+.noteTitle { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 5px; margin-top: 5px; line-height: 1.2; z-index: 2; }
+.noteDesc { font-size: 11px; color: #555; flex: 1; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; z-index: 2; pointer-events: none; }
+.noteDate { font-size: 10px; color: rgba(0,0,0,0.5); margin-top: auto; text-align: right; font-weight: 600; z-index: 2; }
+
+/* MÀU PASTEL */
+.colorYellow { background: linear-gradient(135deg, #fdf5c9, #f9e984); }
+.colorPink { background: linear-gradient(135deg, #fde3e9, #f8c4d0); }
+.colorGreen { background: linear-gradient(135deg, #e4f9e0, #c0e8ba); }
+.colorBlue { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
+
+/* Bẻ góc xoay */
+.rotateLeft1 { transform: rotate(-3deg); }
+.rotateLeft2 { transform: rotate(-6deg); }
+.rotateRight1 { transform: rotate(3deg); }
+.rotateRight2 { transform: rotate(6deg); }
+
+/* --- MODAL XÁC NHẬN XÓA --- */
+.modalOverlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(2px);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+.confirmModal {
+    background: white; padding: 25px 20px; border-radius: 12px; width: 320px; max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center;
+}
+.confirmTitle { margin-top: 0; font-size: 20px; color: #444; font-weight: 700; margin-bottom: 15px; }
+.confirmText { font-size: 14px; color: #666; margin-bottom: 25px; }
+.modalActions { display: flex; justify-content: center; gap: 15px; }
+.cancelBtn {
+    padding: 8px 25px; border: 1px solid #ccc; background: white;
+    border-radius: 6px; cursor: pointer; font-weight: 600; color: #333; transition: 0.2s;
+}
+.cancelBtn:hover { background: #f5f5f5; border-color: #bbb; }
+.confirmDeleteBtn {
+    padding: 8px 25px; border: none; background: #d9534f;
+    border-radius: 6px; cursor: pointer; font-weight: 600; color: white; transition: 0.2s;
+}
+.confirmDeleteBtn:hover { background: #c9302c; }
+.completeBtn {
+    background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+    padding: 6px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;
+    display: flex; align-items: center; gap: 5px; transition: 0.2s;
+}
+.completeBtn:hover { background-color: #28a745; color: white; border-color: #28a745; }
+
+/* 🌟 HIỆU ỨNG CHO TASK ĐÃ HOÀN THÀNH */
+.completedNote {
+    opacity: 0.6;
+    filter: grayscale(80%); /* Chuyển tờ giấy sang tone màu xám nhạt/bạc màu */
+    transition: all 0.3s ease;
+}
+.completedNote .noteTitle,
+.completedNote .noteDesc {
+    text-decoration: line-through; /* Gạch ngang chữ */
+    color: #888 !important; 
+}
+.completedNote:hover {
+    opacity: 0.9;
+    filter: grayscale(30%); /* Rõ lên một tí khi lướt chuột vào để dễ đọc */
+}
+
+@media screen and (max-width: 768px) {
+    /* 1. GIỮ NGUYÊN LƯỚI 2x2 NHƯ TRÊN PC */
+    .matrixGrid { 
+        grid-template-columns: 1fr 1fr; 
+        grid-template-rows: 1fr 1fr; 
+        gap: 8px;
+        min-height: calc(100vh - 150px);
+    }
+    
+    /* 2. Tối ưu lại Ô chứa và Tiêu đề */
+    .quadrant { padding: 5px; border-width: 1px; height: 100%; }
+    .quadrantTitle { font-size: 12px; padding: 5px; margin-bottom: 5px; }
+    .quadrantTitle span { font-size: 9px !important; display: block; margin-top: 2px; }
+
+    /* 3. THU NHỎ GIẤY NHỚ LẠI ĐỂ VỪA VẶN MÀN HÌNH ĐIỆN THOẠI */
+    .stickyNote {
+        width: 75px;
+        height: 75px;
+        padding: 8px 6px 6px 6px;
+        border-radius: 2px 8px 2px 8px;
+    }
+    
+    /* Tối ưu chữ bên trong giấy nhớ */
+    .noteTitle { font-size: 10px; margin-top: 2px; margin-bottom: 2px; }
+    .noteDesc { 
+        font-size: 9px; 
+        -webkit-line-clamp: 2; /* Trên mobile chỉ hiện 2 dòng mô tả thôi */
+        line-clamp: 2; 
+    }
+    .noteDate { font-size: 8px; margin-top: auto; }
+    
+    /* Thu nhỏ cây đinh ghim */
+    .pin { width: 10px; height: 10px; top: -5px; }
+    
+    /* Hiệu ứng khi Double Click (Chọn) trên Mobile */
+    .selectedOverlay { font-size: 35px; border-width: 2px; }
+    
+    /* 4. Chỉnh lại phần Header cho gọn */
+    .wallHeader { flex-direction: column; align-items: flex-start; gap: 10px; padding-bottom: 5px; }
+    .pageTitle { font-size: 24px; }
+    .headerActions { width: 100%; display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-start; }
+    .selectedText { width: 100%; font-size: 12px; }
+    .completeBtn, .deleteBtn { padding: 5px 10px; font-size: 11px; flex: 1; justify-content: center; }
+}

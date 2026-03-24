@@ -140,6 +140,15 @@
     font-weight: bold;
 }
 
+/* 🌟 Ẩn thanh cuộn (Scrollbar) của lưới lịch nhưng vẫn cho phép cuộn */
+:global(.fc-scroller) {
+    -ms-overflow-style: none;  /* Cho Internet Explorer, Edge */
+    scrollbar-width: none;     /* Cho Firefox */
+}
+:global(.fc-scroller::-webkit-scrollbar) {
+    display: none;             /* Cho Chrome, Safari, và Opera */
+}
+
 .calendarWrapper {
     display: flex; 
     flex-direction: column; 
@@ -225,10 +234,13 @@
     
     :global(.fc-timegrid-slot-label) { font-size: 10px; }
 
-    /* 🌟 FIX LỖI TÀNG HÌNH: Ép cứng chiều cao cho thẻ bọc lịch */
+    .calendarWrapper {
+        height: calc(100vh - 90px);
+    }
+
     .calendarBody {
-        height: 600px; /* Bắt buộc phải có con số cụ thể trên mobile */
-        min-height: 600px;
+        height: 100%;
+        min-height: 400px;
         width: 100%;
     }
 }
