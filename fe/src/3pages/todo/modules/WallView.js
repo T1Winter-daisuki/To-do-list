@@ -13,7 +13,7 @@ const noteColors = [styles.colorYellow, styles.colorBlue, styles.colorPink, styl
 const noteRotations = [styles.rotateLeft1, styles.rotateLeft2, styles.rotateRight1, styles.rotateRight2, ''];
 
 const StickyWall = () => {
-    const { tasks, setDetailTask, handleDeleteMultipleTasks } = useOutletContext();
+    const { tasks, setDetailTask, handleDeleteMultipleTasks, handleToggleComplete } = useOutletContext();
     
     // Lưu vị trí kéo
     const [overrides, setOverrides] = useState(() => {
@@ -63,6 +63,22 @@ const StickyWall = () => {
         } else {
             toast.error("Lỗi xóa Tasks");
         }
+    };
+
+    const handleToggleSelectedStatus = async () => {
+        if (!handleToggleComplete) {
+            alert("Lỗi: Chưa truyền handleToggleComplete vào Context!");
+            return;
+        }
+        
+        // Lấy ra toàn bộ object của các task đang được chọn
+        const tasksToUpdate = tasks.filter(t => selectedTasks.includes(t.id));
+        
+        // Chạy Promise.all để gọi API Update song song cho tất cả các task đó
+        await Promise.all(tasksToUpdate.map(t => handleToggleComplete(t)));
+        
+        // Đổi trạng thái xong thì bỏ chọn để giao diện gọn gàng
+        setSelectedTasks([]);
     };
 
     const quadrantsData = useMemo(() => {
@@ -198,6 +214,11 @@ const StickyWall = () => {
                 {selectedTasks.length > 0 && (
                     <div className={styles.headerActions}>
                         <span className={styles.selectedText}>Đã chọn: {selectedTasks.length} task</span>
+
+                        <button className={styles.completeBtn} onClick={handleToggleSelectedStatus}>
+                            ✔️ Đổi trạng thái
+                        </button>
+                        
                         <button className={styles.deleteBtn} onClick={() => setShowConfirmModal(true)}>
                             🗑️ Xóa đã chọn
                         </button>
