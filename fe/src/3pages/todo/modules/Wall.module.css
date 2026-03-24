@@ -1,156 +1,151 @@
-/* Bố cục tổng: Trải rộng toàn màn hình */
-.wallContainer {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-}
-
-.wallHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #DEDED1;
-}
-
+.wallContainer { display: flex; flex-direction: column; height: 100%; padding: 10px; box-sizing: border-box; }
+.wallHeader { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #DEDED1; }
 .pageTitle { font-size: 30px; margin: 0; font-weight: 800; color: #444; }
 
-/* 🌟 LƯỚI 4 GÓC PHẦN TƯ (EISENHOWER MATRIX) */
-.matrixGrid {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 Cột */
-    grid-template-rows: 1fr 1fr;    /* 2 Hàng */
-    gap: 15px;
-    min-height: 0; /* Giúp lưới co giãn tốt trong flexbox */
+.headerActions { display: flex; align-items: center; gap: 15px; }
+.selectedText { font-size: 14px; color: #888; font-weight: 500; }
+.deleteBtn {
+    background-color: #f8d7da; color: #d9534f; border: 1px solid #f5c6cb;
+    padding: 6px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;
+    display: flex; align-items: center; gap: 5px; transition: 0.2s;
+}
+.deleteBtn:hover { background-color: #d9534f; color: white; }
+
+/* --- LƯỚI MA TRẬN --- */
+.matrixGrid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 15px; min-height: 0; }
+
+.quadrant { 
+    background-color: rgba(255, 255, 255, 0.4); /* Nền bảng trắng mờ */
+    border: 2px dashed #C5C7BC; 
+    border-radius: 12px; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+    transition: 0.2s; 
+    position: relative; 
+}
+.quadrant.dragOver { border-color: #B6AE9F; background-color: rgba(182, 174, 159, 0.2); }
+
+/* 🌟 TIÊU ĐỀ CÓ MÀU NỀN TÁCH BIỆT */
+.quadrantTitle { 
+    font-size: 16px; 
+    font-weight: 800; 
+    text-align: center; 
+    padding: 12px 10px; 
+    border-bottom: 2px dashed rgba(0,0,0,0.1); 
+    z-index: 2; 
+    position: relative; 
 }
 
-/* Từng khu vực Góc phần tư */
-.quadrant {
-    background-color: rgba(255, 255, 255, 0.6);
-    border: 2px dashed #C5C7BC;
-    border-radius: 12px;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto; /* Tự sinh thanh cuộn nếu dán quá nhiều giấy nhớ */
-    transition: background-color 0.2s ease;
-}
+/* Đổ màu nền nhạt cho từng Header */
+.q1 .quadrantTitle { background-color: #fdeaea; color: #d9534f; } /* Đỏ nhạt */
+.q2 .quadrantTitle { background-color: #eef9ee; color: #5cb85c; } /* Xanh nhạt */
+.q3 .quadrantTitle { background-color: #fdf6ea; color: #f0ad4e; } /* Vàng nhạt */
+.q4 .quadrantTitle { background-color: #f5f5f5; color: #888; }    /* Xám nhạt */ 
 
-/* Hiệu ứng khi kéo một tờ giấy lơ lửng qua (Drag Over) */
-.quadrant.dragOver {
-    background-color: rgba(182, 174, 159, 0.2);
-    border-style: solid;
-    border-color: #B6AE9F;
-}
-
-/* Tiêu đề của 4 góc */
-.quadrantTitle {
-    font-size: 16px;
-    font-weight: 800;
-    margin-bottom: 15px;
-    text-align: center;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-/* Màu riêng cho từng tiêu đề góc */
-.q1 .quadrantTitle { color: #d9534f; } /* Gấp & Quan trọng (Đỏ) */
-.q2 .quadrantTitle { color: #5cb85c; } /* Không Gấp & Quan trọng (Xanh lá) */
-.q3 .quadrantTitle { color: #f0ad4e; } /* Gấp & Không Quan trọng (Vàng) */
-.q4 .quadrantTitle { color: #888; }    /* Không Gấp & Không Quan trọng (Xám) */
-
-/* Khu vực dán giấy nhớ */
+/* --- KHU VỰC DÁN GIẤY (TỰ DO TUYỆT ĐỐI) --- */
 .notesContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-content: flex-start;
+    flex: 1;
+    position: relative; /* 🌟 Biến thành khung tọa độ */
+    width: 100%;
+    height: 100%;
 }
 
-/* 🌟 THIẾT KẾ TỜ GIẤY NHỚ (STICKY NOTE) */
 .stickyNote {
-    width: 140px;
-    min-height: 140px;
-    padding: 15px;
-    border-radius: 2px 15px 2px 15px; /* Vát mép tạo cảm giác tờ giấy thật */
-    box-shadow: 3px 4px 10px rgba(0,0,0,0.1);
+    position: absolute; /* 🌟 Rút giấy ra khỏi luồng văn bản, lơ lửng tự do */
+    width: 130px;
+    height: 130px; /* Cố định kích thước để không phình to */
+    padding: 12px 15px 10px 15px;
+    border-radius: 2px 15px 2px 15px; 
+    box-shadow: 2px 4px 8px rgba(0,0,0,0.15);
     cursor: grab;
-    position: relative;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, z-index 0.2s;
+    z-index: 10; 
 }
 
-/* Hiệu ứng khi đang nhấc tờ giấy lên để kéo */
-.stickyNote:active {
-    cursor: grabbing;
-    transform: scale(1.05) rotate(0deg) !important;
-    box-shadow: 5px 8px 15px rgba(0,0,0,0.2);
-    z-index: 10;
+/* Khi lướt chuột qua: Phóng to và nhảy lên trên cùng */
+.stickyNote:hover {
+    z-index: 50; 
+    transform: scale(1.1) rotate(0deg) !important; 
+    box-shadow: 0 15px 25px rgba(0,0,0,0.3);
 }
 
-/* Cây đinh ghim ở giữa mép trên */
-.pin {
+.stickyNote:active { cursor: grabbing; z-index: 60; }
+
+/* 🌟 HIỆU ỨNG KHI DOUBLE CLICK (ĐÃ CHỌN) */
+.selectedOverlay {
     position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 16px;
-    height: 16px;
-    background: radial-gradient(circle at 30% 30%, #ef5350, #b71c1c);
-    border-radius: 50%;
-    box-shadow: 1px 2px 3px rgba(0,0,0,0.3);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.5);
+    border: 3px dashed #d9534f;
+    border-radius: 2px 15px 2px 15px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 60px; color: #d9534f; font-weight: bold;
+    z-index: 5; pointer-events: none; /* Xuyên thấu click */
 }
 
-.noteTitle {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 8px;
-    margin-top: 5px;
-    line-height: 1.3;
-}
+/* Đinh ghim */
+.pin { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 14px; height: 14px; background: radial-gradient(circle at 30% 30%, #ef5350, #b71c1c); border-radius: 50%; box-shadow: 1px 2px 3px rgba(0,0,0,0.3); z-index: 6; }
 
-.noteDesc {
-    font-size: 12px;
-    color: #555;
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 4; /* Giới hạn mô tả 4 dòng */
-    -webkit-box-orient: vertical;
-}
+.noteTitle { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 5px; margin-top: 5px; line-height: 1.2; z-index: 2; }
+.noteDesc { font-size: 11px; color: #555; flex: 1; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; z-index: 2; pointer-events: none; }
+.noteDate { font-size: 10px; color: rgba(0,0,0,0.5); margin-top: auto; text-align: right; font-weight: 600; z-index: 2; }
 
-.noteDate {
-    font-size: 11px;
-    color: rgba(0,0,0,0.5);
-    margin-top: 10px;
-    text-align: right;
-    font-weight: 600;
-}
-
-/* 4 MÀU PASTEL XINH XẮN CHO GIẤY NHỚ */
+/* MÀU PASTEL */
 .colorYellow { background: linear-gradient(135deg, #fdf5c9, #f9e984); }
 .colorPink { background: linear-gradient(135deg, #fde3e9, #f8c4d0); }
 .colorGreen { background: linear-gradient(135deg, #e4f9e0, #c0e8ba); }
 .colorBlue { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
 
-/* Bẻ góc xoay ngẫu nhiên cho tự nhiên (Ta sẽ gắn class này bằng JS) */
-.rotateLeft1 { transform: rotate(-2deg); }
-.rotateLeft2 { transform: rotate(-4deg); }
-.rotateRight1 { transform: rotate(2deg); }
-.rotateRight2 { transform: rotate(4deg); }
+/* Bẻ góc xoay */
+.rotateLeft1 { transform: rotate(-3deg); }
+.rotateLeft2 { transform: rotate(-6deg); }
+.rotateRight1 { transform: rotate(3deg); }
+.rotateRight2 { transform: rotate(6deg); }
 
-/* Responsive Mobile */
+/* --- MODAL XÁC NHẬN XÓA --- */
+.modalOverlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(2px);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+.confirmModal {
+    background: white; padding: 25px 20px; border-radius: 12px; width: 320px; max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center;
+}
+.confirmTitle { margin-top: 0; font-size: 20px; color: #444; font-weight: 700; margin-bottom: 15px; }
+.confirmText { font-size: 14px; color: #666; margin-bottom: 25px; }
+.modalActions { display: flex; justify-content: center; gap: 15px; }
+.cancelBtn {
+    padding: 8px 25px; border: 1px solid #ccc; background: white;
+    border-radius: 6px; cursor: pointer; font-weight: 600; color: #333; transition: 0.2s;
+}
+.cancelBtn:hover { background: #f5f5f5; border-color: #bbb; }
+.confirmDeleteBtn {
+    padding: 8px 25px; border: none; background: #d9534f;
+    border-radius: 6px; cursor: pointer; font-weight: 600; color: white; transition: 0.2s;
+}
+.confirmDeleteBtn:hover { background: #c9302c; }
+
+/* 🌟 HIỆU ỨNG CHO TASK ĐÃ HOÀN THÀNH */
+.completedNote {
+    opacity: 0.6;
+    filter: grayscale(80%); /* Chuyển tờ giấy sang tone màu xám nhạt/bạc màu */
+    transition: all 0.3s ease;
+}
+.completedNote .noteTitle,
+.completedNote .noteDesc {
+    text-decoration: line-through; /* Gạch ngang chữ */
+    color: #888 !important; 
+}
+.completedNote:hover {
+    opacity: 0.9;
+    filter: grayscale(30%); /* Rõ lên một tí khi lướt chuột vào để dễ đọc */
+}
+
 @media screen and (max-width: 768px) {
-    .matrixGrid {
-        grid-template-columns: 1fr; /* Thành 1 cột kéo dài */
-        grid-template-rows: auto auto auto auto;
-    }
-    .quadrant { min-height: 250px; }
+    .matrixGrid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 300px); }
+    .quadrant { min-height: 300px; }
 }

@@ -1,84 +1,145 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import styles from './Wall.module.css';
 
-// Hàm helper để render ngày giờ đẹp hơn
 const formatShortDate = (dateString) => {
     if (!dateString) return '';
     const d = new Date(dateString);
-    return `${d.getDate()}/${d.getMonth() + 1} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+    return `${d.getDate()}/${d.getMonth() + 1}`;
 };
 
-// Mảng class màu sắc và độ nghiêng cho các tờ note
-const noteColors = [styles.colorYellow, styles.colorPink, styles.colorGreen, styles.colorBlue];
+const noteColors = [styles.colorYellow, styles.colorBlue, styles.colorPink, styles.colorGreen];
 const noteRotations = [styles.rotateLeft1, styles.rotateLeft2, styles.rotateRight1, styles.rotateRight2, ''];
 
 const StickyWall = () => {
-    const { tasks, setDetailTask } = useOutletContext();
+    const { tasks, setDetailTask, handleDeleteMultipleTasks } = useOutletContext();
     
-    // Lưu trữ vị trí do người dùng tự kéo thả (Ghi đè logic tự động)
-    // Thực tế bạn có thể lưu cái này vào localStorage để F5 không bị mất
-    const [overrides, setOverrides] = useState({});
+    // Lưu vị trí kéo
+    const [overrides, setOverrides] = useState(() => {
+        const saved = localStorage.getItem('stickyWallOverrides');
+        return saved ? JSON.parse(saved) : {};
+    });
+
+    // Lưu vị trí mỗi khi thay đổi
+    useEffect(() => {
+        localStorage.setItem('stickyWallOverrides', JSON.stringify(overrides));
+    }, [overrides]);
+
     const [draggedTaskId, setDraggedTaskId] = useState(null);
+    const [selectedTasks, setSelectedTasks] = useState([]);
+    useEffect(() => {
+        setSelectedTasks(prev => prev.filter(id => tasks.some(t => t.id === id)));
+    }, [tasks]);
 
-    // 1. LOGIC PHÂN LOẠI TASK (Tự động + Thủ công)
-    const getTaskQuadrant = (task) => {
-        // Nếu người dùng đã tự kéo thả, ưu tiên vị trí người dùng chọn
-        if (overrides[task.id]) return overrides[task.id];
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-        // Nếu chưa kéo thả, tự động tính toán dựa trên Deadline
-        if (!task.deadline) return 'q4'; // Không có hạn -> Bỏ xó góc 4
+    const clickTimer = useRef(null);
 
-        const now = new Date();
-        const dl = new Date(task.deadline);
-        const diffHours = (dl - now) / (1000 * 60 * 60);
-
-        if (diffHours <= 48) return 'q1'; // Dưới 48h hoặc quá hạn -> Gấp -> Góc 1
-        return 'q2'; // Còn nhiều thời gian -> Quan trọng nhưng chưa gấp -> Góc 2
+    // Click 1: mở details
+    const handleNoteClick = (task) => {
+        clearTimeout(clickTimer.current);
+        clickTimer.current = setTimeout(() => {
+            setDetailTask(task);
+        }, 200); 
     };
 
-    // Nhóm các task vào 4 góc
+    // Click đúp: chọn
+    const handleNoteDoubleClick = (taskId) => {
+        clearTimeout(clickTimer.current); 
+        setSelectedTasks(prev => 
+            prev.includes(taskId) ? prev.filter(id => id !== taskId) : [...prev, taskId]
+        );
+    };
+
+    // D
+    const confirmDelete = async () => {
+        if (handleDeleteMultipleTasks) {
+            const success = await handleDeleteMultipleTasks(selectedTasks);
+            if (success) {
+                setSelectedTasks([]); 
+                setShowConfirmModal(false);
+            }
+        } else {
+            toast.error("Lỗi xóa Tasks");
+        }
+    };
+
     const quadrantsData = useMemo(() => {
-        const q = { q1: [], q2: [], q3: [], q4: [] };
-        (tasks || []).forEach(task => {
-            // Ẩn các task đã hoàn thành cho bảng ghim đỡ rác
-            if (task.is_completed) return; 
+        // Xét hạn dl để mặc định đưa vào ô phù hợp
+        const getTaskPlacement = (task) => {
+            if (overrides[task.id]) return overrides[task.id];
+
+            let q = 'q4';
+            if (task.deadline) {
+                const diffHours = (new Date(task.deadline) - new Date()) / (1000 * 60 * 60);
+                q = diffHours <= 48 ? 'q1' : 'q2';
+            }
             
-            const quadrantId = getTaskQuadrant(task);
-            if (q[quadrantId]) q[quadrantId].push(task);
+            // 🌟 Tọa độ random né phần Header (Y chạy từ 15% đến 55%)
+            const randomX = (task.id * 37) % 60;
+            const randomY = 15 + ((task.id * 23) % 40);
+
+            return { q, x: randomX, y: randomY };
+        };
+
+        const result = { q1: [], q2: [], q3: [], q4: [] };
+        (tasks || []).forEach(task => {
+            const placement = getTaskPlacement(task);
+            if (result[placement.q]) {
+                result[placement.q].push({ ...task, posX: placement.x, posY: placement.y });
+            }
         });
-        return q;
+        return result;
     }, [tasks, overrides]);
 
-    // 2. CÁC HÀM XỬ LÝ KÉO THẢ (DRAG & DROP)
+    // Bắt đầu kéo
     const handleDragStart = (e, taskId) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        // Tính khoảng cách từ ngón tay đến mép trái/trên của tờ giấy
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+
         setDraggedTaskId(taskId);
-        // Lưu data ID của task đang bị kéo
-        e.dataTransfer.setData('text/plain', taskId);
+        e.dataTransfer.setData('application/json', JSON.stringify({ taskId, offsetX, offsetY }));
         e.dataTransfer.effectAllowed = 'move';
     };
 
     const handleDragOver = (e) => {
-        e.preventDefault(); // Cần thiết để cho phép Drop
+        e.preventDefault(); 
         e.dataTransfer.dropEffect = 'move';
-        // Có thể thêm class đổi màu nền góc khi đang lướt chuột qua (nếu muốn)
     };
 
+    // Tính toán lại tọa độ Drop
     const handleDrop = (e, quadrantId) => {
         e.preventDefault();
-        const taskId = parseInt(e.dataTransfer.getData('text/plain'), 10);
-        
+        const dataStr = e.dataTransfer.getData('application/json');
+        if (!dataStr) return;
+
+        const { taskId, offsetX, offsetY } = JSON.parse(dataStr);
         if (taskId) {
-            // Cập nhật vị trí mới do người dùng ấn định
-            setOverrides(prev => ({
-                ...prev,
-                [taskId]: quadrantId
+            const rect = e.currentTarget.getBoundingClientRect();
+            
+            // Lấy tọa độ chuột TRỪ đi khoảng cách ngón tay (offsetX/Y) để giấy rơi đúng chỗ
+            let pixelX = e.clientX - rect.left - offsetX;
+            let pixelY = e.clientY - rect.top - offsetY;
+
+            // Chuyển sang %
+            let x = (pixelX / rect.width) * 100;
+            let y = (pixelY / rect.height) * 100;
+
+            // Ép giới hạn
+            x = Math.max(0, Math.min(x, 65));
+            y = Math.max(15, Math.min(y, 65));
+
+            setOverrides(prev => ({ 
+                ...prev, 
+                [taskId]: { q: quadrantId, x, y } 
             }));
         }
         setDraggedTaskId(null);
     };
 
-    // 3. RENDER MỘT GÓC PHẦN TƯ (QUADRANT)
     const renderQuadrant = (id, title, desc, tasksList) => (
         <div 
             className={`${styles.quadrant} ${styles[id]}`}
@@ -91,35 +152,40 @@ const StickyWall = () => {
             
             <div className={styles.notesContainer}>
                 {tasksList.map(task => {
-                    // Tạo màu và độ nghiêng ngẫu nhiên "có chủ đích" dựa vào ID để không bị giật khi render lại
                     const colorClass = noteColors[task.id % noteColors.length];
                     const rotateClass = noteRotations[task.id % noteRotations.length];
                     const isDragging = draggedTaskId === task.id;
+                    const isSelected = selectedTasks.includes(task.id);
 
                     return (
                         <div 
                             key={task.id}
-                            className={`${styles.stickyNote} ${colorClass} ${rotateClass}`}
-                            style={{ opacity: isDragging ? 0.4 : 1 }}
+                            className={`${styles.stickyNote} ${colorClass} ${rotateClass} ${task.is_completed ? styles.completedNote : ''}`}
+                            style={{ 
+                                opacity: isDragging ? 0 : 1, 
+                                left: `${task.posX}%`, 
+                                top: `${task.posY}%` 
+                            }}
                             draggable="true"
                             onDragStart={(e) => handleDragStart(e, task.id)}
                             onDragEnd={() => setDraggedTaskId(null)}
-                            onClick={() => setDetailTask(task)} // Bấm vào để xem/sửa chi tiết
+                            onClick={() => handleNoteClick(task)}
+                            onDoubleClick={() => handleNoteDoubleClick(task.id)}
                         >
                             <div className={styles.pin}></div>
+                            
+                            {isSelected && (
+                                <div className={styles.selectedOverlay}>✓</div>
+                            )}
+
                             <div className={styles.noteTitle}>{task.title}</div>
                             <div className={styles.noteDesc}>{task.description}</div>
                             <div className={styles.noteDate}>
-                                {task.deadline ? formatShortDate(task.deadline) : 'Không có hạn'}
+                                Hạn: {task.deadline ? formatShortDate(task.deadline) : '--'}
                             </div>
                         </div>
                     );
                 })}
-                {tasksList.length === 0 && (
-                    <div style={{width: '100%', textAlign: 'center', color: '#aaa', fontStyle: 'italic', fontSize: '12px', marginTop: '20px'}}>
-                        Kéo thả giấy nhớ vào đây
-                    </div>
-                )}
             </div>
         </div>
     );
@@ -128,21 +194,36 @@ const StickyWall = () => {
         <div className={styles.wallContainer}>
             <div className={styles.wallHeader}>
                 <h1 className={styles.pageTitle}>Sticky Wall</h1>
+                
+                {selectedTasks.length > 0 && (
+                    <div className={styles.headerActions}>
+                        <span className={styles.selectedText}>Đã chọn: {selectedTasks.length} task</span>
+                        <button className={styles.deleteBtn} onClick={() => setShowConfirmModal(true)}>
+                            🗑️ Xóa đã chọn
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className={styles.matrixGrid}>
-                {/* Góc 1: Đỏ */}
                 {renderQuadrant('q1', 'DO', '(Khẩn cấp & Quan trọng)', quadrantsData.q1)}
-                
-                {/* Góc 2: Xanh lá */}
                 {renderQuadrant('q2', 'DECIDE', '(Không Khẩn cấp nhưng Quan trọng)', quadrantsData.q2)}
-                
-                {/* Góc 3: Vàng */}
                 {renderQuadrant('q3', 'DELEGATE', '(Khẩn cấp nhưng Không Quan trọng)', quadrantsData.q3)}
-                
-                {/* Góc 4: Xám */}
                 {renderQuadrant('q4', 'DELETE', '(Không Khẩn cấp & Không Quan trọng)', quadrantsData.q4)}
             </div>
+
+            {showConfirmModal && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.confirmModal}>
+                        <h3 className={styles.confirmTitle}>Xác nhận xóa?</h3>
+                        <p className={styles.confirmText}>Bạn đang chọn xóa {selectedTasks.length} task. Hành động này không thể hoàn tác.</p>
+                        <div className={styles.modalActions}>
+                            <button className={styles.cancelBtn} onClick={() => setShowConfirmModal(false)}>Hủy</button>
+                            <button className={styles.confirmDeleteBtn} onClick={confirmDelete}>Xóa</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
