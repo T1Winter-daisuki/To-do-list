@@ -51,7 +51,11 @@ export const useTasks = (userId) => {
             const payload = { ...task, is_completed: !task.is_completed };
             const res = await taskServices.updateTask(task.id, payload);
             setTasks(prev => prev.map(t => t.id === task.id ? res.data : t));
-            if (payload.is_completed) toast.info("Đã xong!");
+            if (payload.is_completed) {
+                toast.success("Đã hoàn thành!");
+            } else {
+                toast.info("Chưa hoàn thành!");
+            }
             return true;
         } catch (error) {
             const msg = error.response?.data?.message || error.message;

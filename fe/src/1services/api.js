@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -48,7 +49,12 @@ instance.interceptors.response.use(
                 }
             } catch (refresherror) {
                 localStorage.clear();
-                window.location.href = '/login';
+                toast.warning("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!", {
+                    autoClose: 2000
+                });
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
                 return Promise.reject(refresherror);
             }
         }
