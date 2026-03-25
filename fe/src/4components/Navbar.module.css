@@ -127,7 +127,7 @@
   }
   .navlist.open { transform: translateX(0); }
   .navlist a {
-      display: block; margin: 15px 0; font-size: 20px;
+      display: block; margin: 20px 0; font-size: 30px;
       color: #FBF3D1; /* Chữ màu sáng trên nền tối */
       width: 100%;
   }

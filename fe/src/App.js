@@ -10,10 +10,10 @@ import Footer from './4components/Footer';
 function App() {
   return (
     <Router>
-      <div className="App" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div className="App">
         <Navbar />
         
-        <div style={{ flex: 1 }}>
+        <div className="App-content">
             <AppRoutes />
         </div>
 

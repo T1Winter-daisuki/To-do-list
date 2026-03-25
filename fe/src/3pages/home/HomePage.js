@@ -17,7 +17,7 @@ const HomePage = () => {
                     <span className={styles.highlight}>Hiệu quả & Đơn giản</span>
                 </h1>
                 <p className={styles.description}>
-                    Chào mừng đến với To-Do List. 
+                    Chào mừng đến với Self-help List. 
                     Một công cụ giúp bạn tổ chức cuộc sống, theo dõi tâm trạng và hoàn thành mục tiêu mỗi ngày.
                 </p>
                 
