@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../2context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import styles from './LoginPage.module.css';
 
 const LoginPage = () => {
@@ -11,6 +11,8 @@ const LoginPage = () => {
 
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from || '/home';
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -20,7 +22,8 @@ const LoginPage = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         const success = await login(formData.username, formData.password);
-        if (success) navigate('/');
+        if (success)
+            navigate(from, { replace: true });
     };
 
     return (

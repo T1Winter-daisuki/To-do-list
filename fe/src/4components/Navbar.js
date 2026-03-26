@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../2context/AuthContext';
 import styles from './Navbar.module.css';
@@ -16,6 +16,32 @@ const Navbar = () => {
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [isLoadingProfile, setIsLoadingProfile] = useState(false);
     const [formData, setFormData] = useState({ first_name: '', last_name: '', phone: '', dob: '' });
+
+    const dropdownRef = useRef(null);
+
+    // ESC
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                setIsProfileModalOpen(false);
+                setIsDropdownOpen(false);
+                setIsMenuOpen(false);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    // click chuột ra ngoài vùng Menu
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Nếu click không nằm trong mỏ neo
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target))
+                setIsDropdownOpen(false);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
    
     useEffect(() => {
         if (isProfileModalOpen && user) {
@@ -130,7 +156,7 @@ const Navbar = () => {
 
             <div className={styles.userAreaDesktop}>
             {user ? (
-                <div className={styles.userContainer} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                <div className={styles.userContainer} ref={dropdownRef} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                     <div className={styles.avatarCircle}>
                         {user.username ? user.username.charAt(0).toUpperCase() : <FaUserCircle />}
                     </div>

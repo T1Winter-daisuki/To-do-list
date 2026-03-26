@@ -58,6 +58,19 @@ const TodoPage = () => {
         setIsEditing(null);
         setShowCreateModal(true);
     };
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                setShowCreateModal(false); // Đóng form Tạo/Sửa
+                setDetailTask(null);       // Đóng chi tiết
+                setDeleteTaskId(null);     // Đóng xác nhận xóa
+                setShowSettingsModal(false); // Đóng cài đặt
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     // setup update
     const openEdit = (task, e) => {
@@ -255,7 +268,8 @@ const TodoPage = () => {
                                 placeholder="Tên Task" 
                                 value={formData.title} 
                                 onChange={e => setFormData({...formData, title: e.target.value})} 
-                                required />
+                                required 
+                                autoFocus/>
                             
                             {/* des */}
                             <textarea 
