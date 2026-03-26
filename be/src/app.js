@@ -12,6 +12,8 @@ import taskRoutes from '../src/3_tasks/5routes/taskRoutes.js';
 const app = express();
 app.use(cookieParser());
 
+app.set('trust proxy', 1);
+
 app.use(express.json());
 
 // Cấu hình CORS: Cho phép ai được gọi API
