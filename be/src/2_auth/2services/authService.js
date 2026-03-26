@@ -53,7 +53,7 @@ export const registerService = async(data) => {
 
     // tạo user mới
     const newUser = await authModel.createUser({
-        username, password_hash, email, phone, dob, first_name, last_name
+        username, password_hash, email, phone, dob, first_name, last_name, otp_code, otp_expires_at
     });
 
     // gửi OTP
@@ -72,6 +72,8 @@ export const verifyOTP = async(email, otp_code) => {
         throw new Error('Tài khoản không tồn tại');
     if (user.is_verified)
         throw new Error('Tài khoản đã được xác thực');
+    console.log("Mã trong DB:", user.otp_code, typeof user.otp_code);
+    console.log("Mã FE gửi lên:", otp_code, typeof otp_code);
     if (String(user.otp_code).trim() !== String(otp_code).trim())
         throw new Error('Mã xác thực không chính xác');
     if (new Date() > new Date(user.otp_expires_at))
