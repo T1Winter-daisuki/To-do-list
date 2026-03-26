@@ -72,8 +72,6 @@ export const verifyOTP = async(email, otp_code) => {
         throw new Error('Tài khoản không tồn tại');
     if (user.is_verified)
         throw new Error('Tài khoản đã được xác thực');
-    console.log("Mã trong DB:", user.otp_code, typeof user.otp_code);
-    console.log("Mã FE gửi lên:", otp_code, typeof otp_code);
     if (String(user.otp_code).trim() !== String(otp_code).trim())
         throw new Error('Mã xác thực không chính xác');
     if (new Date() > new Date(user.otp_expires_at))
@@ -109,8 +107,8 @@ export const resendOTP = async (email) => {
     const otp_expires_at = getOTPExpireTime();
 
     // Lưu vào DB và gửi mail
-    await authModel.newOTP(email, otp_code, otp_expires_at);
-    await sendOTP(email, otp_code);
+    await authModel.newOTP(user.email, otp_code, otp_expires_at);
+    await sendOTP(user.email, otp_code);
 
     return { message: "Mã xác nhận mới đã được gửi đến email của bạn." };
 };
