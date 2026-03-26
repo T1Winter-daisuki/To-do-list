@@ -72,9 +72,9 @@ export const verifyOTP = async(email, otp_code) => {
         throw new Error('Tài khoản không tồn tại');
     if (user.is_verified)
         throw new Error('Tài khoản đã được xác thực');
-    if (user.otp_code !== otp_code)
+    if (String(user.otp_code).trim() !== String(otp_code).trim())
         throw new Error('Mã xác thực không chính xác');
-    if (new Date() > new Date(otp_expires_at))
+    if (new Date() > new Date(user.otp_expires_at))
         throw new Error('Mã xác thực quá hạn');
 
     const verifiedUser = await authModel.verifyUser(user.id);
