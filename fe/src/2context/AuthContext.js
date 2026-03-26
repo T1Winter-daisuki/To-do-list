@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { loginAPI, registerAPI, logoutAPI, updateAPI } from "../1services/authServices.js";
+import { loginAPI, registerAPI, logoutAPI, updateAPI, verifyOTPAPI, resendOTPAPI } from "../1services/authServices.js";
 import { toast } from "react-toastify"; // thông báo
 
 // loa
@@ -22,19 +22,21 @@ export const AuthProvider = ({ children }) => {
             const response = await loginAPI(username, password);
             if (response.data) {
                 const { user } = response.data;
-                const userData = { 
-                    ...user
-                };
-
-                setUser(userData);
+                setUser({ ...user });
                 localStorage.setItem('accessToken', response.data.accessToken);
-                localStorage.setItem('user', JSON.stringify(userData));
+                localStorage.setItem('user', JSON.stringify(user));
 
                 toast.success("Đăng nhập thành công");
                 return true;
             }
         } catch (error) {
             const message = error.response?.data?.message || "Đăng nhập thất bại";
+            
+            if (message === 'Tài khoản chưa được xác thực') {
+                toast.warning("Tài khoản chưa xác thực. Vui lòng nhập mã OTP!");
+                return { success: false, status: 'unverified' }; 
+            }
+
             toast.error(message);
             return false;
         }
@@ -43,21 +45,42 @@ export const AuthProvider = ({ children }) => {
     const register = async(userData) => {
         try {
             const response = await registerAPI(userData);
-            if (response.data) {
-                const { user } = response.data;
-                const userData = { 
-                    ...user
-                };
-                
-                setUser(userData);
-                localStorage.setItem('accessToken', response.data.accessToken);
-                localStorage.setItem('user', JSON.stringify(userData));
+            toast.success(response.message || "Đăng ký thành công! Vui lòng kiểm tra email.");
+            return true;
+        } catch (error) {
+            const message = error.response?.data?.message || "Đăng ký thất bại";
+            toast.error(message);
+            return false;
+        }
+    };
 
-                toast.success("Đăng ký thành công");
+    const verifyOTP = async (email, otp_code) => {
+        try {
+            const response = await verifyOTPAPI({ email, otp_code });
+            if (response.data) {
+                const { user, accessToken } = response.data;
+                
+                setUser(user);
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('user', JSON.stringify(user));
+
+                toast.success("Xác thực email thành công!");
                 return true;
             }
         } catch (error) {
-            const message = error.response?.data?.message || "Đăng ký thất bại";
+            const message = error.response?.data?.message || "Xác thực thất bại";
+            toast.error(message);
+            return false;
+        }
+    };
+
+    const resendOTP = async (email) => {
+        try {
+            const response = await resendOTPAPI({ email });
+            toast.info(response.message || "Đã gửi lại mã OTP. Vui lòng kiểm tra email.");
+            return true;
+        } catch (error) {
+            const message = error.response?.data?.message || "Lỗi gửi lại mã";
             toast.error(message);
             return false;
         }
@@ -103,6 +126,8 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         update,
+        verifyOTP,
+        resendOTP,
         loading
     };
 

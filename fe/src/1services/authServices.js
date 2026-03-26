@@ -20,4 +20,11 @@ const getUserAPI = () => {
     return axios.get('/api/auth/user');
 }
 
-export { registerAPI, loginAPI, logoutAPI, updateAPI, getUserAPI };
+const verifyOTPAPI = async (data) => {
+    return axios.post('/api/auth/verify-otp', data);
+};
+
+const resendOTPAPI = async (data) => {
+    return axios.post('/api/auth/resend-otp', data);
+};
+export { registerAPI, loginAPI, logoutAPI, updateAPI, getUserAPI, verifyOTPAPI, resendOTPAPI };
