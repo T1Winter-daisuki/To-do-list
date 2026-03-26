@@ -1,10 +1,67 @@
 import express from 'express';
-import { handleRegister, handleLogin, refreshToken, logout, handleUpdate, getUser } from "../4controllers/authController.js";
+import { handleRegister, handleLogin, 
+        refreshToken, logout, handleUpdate, getUser, handleVerifyOTP, handleResendOTP } from "../4controllers/authController.js";
 import { validRegister, registerRateLimit, registerRateLimitDaily, 
          validLogin, loginRateLimit, verifyToken, validUpdate
 } from "../3middleware/authMiddleware.js";
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * /api/auth/verify-otp:
+ *   post:
+ *     summary: Xác thực mã OTP để kích hoạt tài khoản
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - otp_code
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "to-do-app@gmail.com"
+ *               otp_code:
+ *                 type: string
+ *                 example: "123456"
+ *     responses:
+ *       200:
+ *         description: Xác thực thành công và trả về Token (Đăng nhập luôn)
+ *       400:
+ *         description: Sai mã OTP hoặc mã đã hết hạn
+ */
+router.post('/verify-otp', handleVerifyOTP);
+
+/**
+ * @swagger
+ * /api/auth/resend-otp:
+ *   post:
+ *     summary: Gửi lại mã OTP mới vào email
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "to-do-app@gmail.com"
+ *     responses:
+ *       200:
+ *         description: Đã gửi mã OTP mới
+ *       400:
+ *         description: Email không tồn tại hoặc đã xác thực
+ */
+router.post('/resend-otp', handleResendOTP);
 
 /**
  * @swagger

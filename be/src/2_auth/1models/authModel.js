@@ -12,18 +12,22 @@ export const checkExist = async(field, value) => {
 }
 
 export const createUser = async(user) => {
-    const {username, password_hash, email, phone, dob, first_name, last_name} = user;
+    const {username, password_hash, email, phone, dob, first_name, last_name, otp_code, otp_expires_at} = user;
     const query = `
-        INSERT INTO users (username, password_hash, email, phone, dob, first_name, last_name)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO users (username, password_hash, email, phone, dob, first_name, last_name, is_verified, otp_code, otp_expires_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, false, $8, $9)
         RETURNING *`;
-    const result = await pool.query(query, [username, password_hash, email, toNullIfEmpty(phone), toNullIfEmpty(dob), toNullIfEmpty(first_name), toNullIfEmpty(last_name)]);
+    const result = await pool.query(query, 
+        [username, password_hash, 
+            email, toNullIfEmpty(phone), toNullIfEmpty(dob), 
+            toNullIfEmpty(first_name), toNullIfEmpty(last_name), 
+            otp_code, otp_expires_at]);
     return result.rows[0];
 }
 
 // cho refreshTok
 export const findUserbyId = async(id) => {
-    const query = `SELECT id, username, email, first_name, last_name, phone, dob FROM users WHERE id = $1`;
+    const query = `SELECT id, username, email, first_name, last_name, phone, dob, is_verified FROM users WHERE id = $1`;
     const result = await pool.query(query, [id]);
     return result.rows[0];
 }
@@ -46,3 +50,25 @@ export const updateUser = async(id, user) => {
     const result = await pool.query(query, [toNullIfEmpty(phone), toNullIfEmpty(dob), toNullIfEmpty(first_name), toNullIfEmpty(last_name), id]);
     return result.rows[0];
 } 
+
+// verify
+export const verifyUser = async(id) => {
+    const query = `
+        UPDATE users
+        SET is_verified = true, otp_code = NULL, otp_expires_at = NULL
+        WHERE id = $1
+        RETURNING id, email, is_verified`
+    const result = await pool.query(query, [id]);
+    return result.rows[0];
+}
+
+// update OTP
+export const newOTP = async(email, otp_code, otp_expires_at) => {
+    const query = `
+        UPDATE users
+        SET otp_code = $1, otp_expires_at = $2
+        WHERE email = $3
+        RETURNING id, email`
+    const result = await pool.query(query, [otp_code, otp_expires_at, email]);
+    return result.rows[0];
+}

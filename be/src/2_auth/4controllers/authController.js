@@ -8,23 +8,45 @@ const cookieOptions = {
     sameSite: 'strict' // Chống CSRF
 };
 
-export const handleRegister = async(req, res) => {
+export const handleVerifyOTP = async(req, res) => {
     try {
-        const { newUser: user, accessToken, refreshToken } = await authService.registerService(req.body);
+        const { email, otp_code } = req.body;
+        const { message, user, accessToken, refreshToken } = await authService.verifyOTP(email, otp_code);
 
         res.cookie('refreshToken', refreshToken, cookieOptions);
 
-        res.status(201).json({ 
-            message: "Đăng kí thành công!",
+        res.status(200).json({
+            message: message,
             data: {
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    first_name: user.first_name
-                },
+                user: user,
                 accessToken
             }
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
+export const handleResendOTP = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const result = await authService.resendOTP(email);
+
+        res.status(200).json({ 
+            message: result.message 
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
+export const handleRegister = async(req, res) => {
+    try {
+        const result = await authService.registerService(req.body);
+
+        res.status(201).json({ 
+            message: result.message,
+            data: { email: result.email }
         });
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -44,7 +66,8 @@ export const handleLogin = async(req, res) => {
                     id: user.id,
                     username: user.username,
                     email: user.email,
-                    first_name: user.first_name
+                    first_name: user.first_name,
+                    is_verified: user.is_verified
                 },
                 accessToken
             }
