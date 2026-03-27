@@ -57,7 +57,7 @@ export const registerService = async(data) => {
     });
 
     // gửi OTP
-    await sendOTP(email, otp_code);
+    sendOTP(email, otp_code);
 
     return {
         message: "Đăng ký thành công! Mã xác nhận đã được gửi đến email của bạn.",
