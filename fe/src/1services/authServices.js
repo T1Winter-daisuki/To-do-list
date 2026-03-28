@@ -27,4 +27,16 @@ const verifyOTPAPI = async (data) => {
 const resendOTPAPI = async (data) => {
     return axios.post('/api/auth/resend-otp', data);
 };
-export { registerAPI, loginAPI, logoutAPI, updateAPI, getUserAPI, verifyOTPAPI, resendOTPAPI };
+
+const forgotPasswordAPI = async (email) => {
+    return axios.post('/api/auth/forgot-password', { email });
+};
+
+const resetPasswordAPI = async (email, otp_code, new_password) => {
+    return axios.post('/api/auth/reset-password', { email, otp_code, new_password });
+};
+
+export { registerAPI, loginAPI, logoutAPI, 
+    updateAPI, getUserAPI, 
+    verifyOTPAPI, resendOTPAPI,
+    forgotPasswordAPI, resetPasswordAPI };

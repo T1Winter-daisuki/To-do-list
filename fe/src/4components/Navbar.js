@@ -110,7 +110,7 @@ const Navbar = () => {
     return (
         <header className={styles.header}>
             <Link to="/home" className={styles.logo}>
-                {AnimatedLogo("To-Do List")}
+                {AnimatedLogo("Self-help List")}
             </Link>
 
             <div className={styles.menuIcon} onClick={toggleMenu}>
