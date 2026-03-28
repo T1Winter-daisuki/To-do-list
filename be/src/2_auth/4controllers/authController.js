@@ -131,3 +131,29 @@ export const getUser = async(req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+export const handleForgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const result = await authService.forgotPassword(email);
+
+        res.status(200).json({ 
+            message: result.message 
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+export const handleResetPassword = async (req, res) => {
+    try {
+        const { email, otp_code, new_password } = req.body;
+        const result = await authService.resetPassword(email, otp_code, new_password);
+
+        res.status(200).json({ 
+            message: result.message 
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};

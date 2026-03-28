@@ -145,3 +145,35 @@ export const validUpdate = (req, res, next) => {
     
     next();
 };
+
+const resetPasswordSchema = Joi.object({
+   email: Joi.string().custom((value) => escape(value)).required().trim().messages({
+        'string.empty': 'Tài khoản/Email không được để trống',
+        'any.required': 'Vui lòng nhập Tài khoản hoặc Email!'
+    }),
+    
+    otp_code: Joi.string().length(6).pattern(/^[0-9]+$/).required().messages({
+        'string.length': 'Mã OTP phải có đúng 6 số',
+        'string.pattern.base': 'Mã OTP chỉ được chứa số',
+        'any.required': 'Vui lòng nhập mã OTP!'
+    }),
+    
+    new_password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$')).min(8).required().messages({
+        'string.min': 'Mật khẩu phải có ít nhất 8 kí tự',
+        'string.empty': 'Mật khẩu không được để trống',
+        'string.pattern.base': 'Mật khẩu phải có chữ hoa, chữ thường và số',
+        'any.required': 'Vui lòng nhập mật khẩu mới!'
+    })
+});
+
+export const validResetPassword = (req, res, next) => {
+    const { error, value } = resetPasswordSchema.validate(req.body, { abortEarly: false, stripUnknown: true });
+    
+    if (error) {
+        const messages = error.details.map(detail => detail.message);
+        return res.status(400).json({ message: messages.join(', ') });
+    }
+    req.body = value;
+    
+    next();
+};

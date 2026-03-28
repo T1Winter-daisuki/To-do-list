@@ -1,8 +1,9 @@
 import express from 'express';
 import { handleRegister, handleLogin, 
-        refreshToken, logout, handleUpdate, getUser, handleVerifyOTP, handleResendOTP } from "../4controllers/authController.js";
+        refreshToken, logout, handleUpdate, getUser, handleVerifyOTP, handleResendOTP,
+        handleForgotPassword, handleResetPassword } from "../4controllers/authController.js";
 import { validRegister, registerRateLimit, registerRateLimitDaily, 
-         validLogin, loginRateLimit, verifyToken, validUpdate
+         validLogin, loginRateLimit, verifyToken, validUpdate, validResetPassword
 } from "../3middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -283,5 +284,67 @@ router.post('/logout', logout);
 router.put('/update', verifyToken, validUpdate, handleUpdate);
 
 router.get('/user', verifyToken, getUser);
+
+/**
+ * @swagger
+ * /api/auth/forgot-password:
+ *   post:
+ *     summary: Yêu cầu gửi mã OTP để đặt lại mật khẩu
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "to-do-app@gmail.com"
+ *                 description: Username hoặc Email
+ *     responses:
+ *       200:
+ *         description: Đã gửi mã OTP
+ *       400:
+ *         description: Tài khoản không tồn tại
+ */
+router.post('/forgot-password', handleForgotPassword);
+
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     summary: Xác nhận mã OTP và đặt lại mật khẩu mới
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - otp_code
+ *               - new_password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "to-do-app@gmail.com"
+ *               otp_code:
+ *                 type: string
+ *                 example: "123456"
+ *               new_password:
+ *                 type: string
+ *                 format: password
+ *                 example: "NewPass123!"
+ *     responses:
+ *       200:
+ *         description: Đổi mật khẩu thành công
+ *       400:
+ *         description: Sai mã OTP hoặc tài khoản không tồn tại
+ */
+router.post('/reset-password', validResetPassword, handleResetPassword);
 
 export default router;

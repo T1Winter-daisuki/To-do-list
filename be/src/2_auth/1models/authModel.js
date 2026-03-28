@@ -72,3 +72,14 @@ export const newOTP = async(email, otp_code, otp_expires_at) => {
     const result = await pool.query(query, [otp_code, otp_expires_at, email]);
     return result.rows[0];
 }
+
+// Đổi pass
+export const updatePassword = async (email, password_hash) => {
+    const query = `
+        UPDATE users
+        SET password_hash = $1, otp_code = NULL, otp_expires_at = NULL
+        WHERE email = $2
+        RETURNING id, email, username`
+    const result = await pool.query(query, [password_hash, email]);
+    return result.rows[0];
+};

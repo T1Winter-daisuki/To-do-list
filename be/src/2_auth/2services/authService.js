@@ -181,3 +181,33 @@ export const updatePro5 = async(userId, data) => {
     
     return pro5;
 }
+
+export const forgotPassword = async (email) => {
+    const user = await authModel.findUsers(email, email);
+    if (!user) throw new Error("Tài khoản không tồn tại");
+
+    const otp_code = generateOTP();
+    const otp_expires_at = getOTPExpireTime();
+
+    await authModel.newOTP(user.email, otp_code, otp_expires_at);
+    sendOTP(user.email, otp_code)
+
+    return { message: "Mã xác nhận đã được gửi đến email của bạn." };
+};
+
+export const resetPassword = async (email, otp_code, new_password) => {
+    const user = await authModel.findUsers(email, email);
+    if (!user) 
+        throw new Error("Tài khoản không tồn tại");
+    if (String(user.otp_code).trim() !== String(otp_code).trim())
+        throw new Error('Mã xác thực không chính xác');
+    if (new Date() > new Date(user.otp_expires_at))
+        throw new Error('Mã xác thực quá hạn');
+
+    const salt = await bcrypt.genSalt(10);
+    const password_hash = await bcrypt.hash(new_password, salt);
+
+    await authModel.updatePassword(user.email, password_hash);
+
+    return { message: "Đổi mật khẩu thành công!" };
+};
