@@ -3,7 +3,7 @@ import { handleRegister, handleLogin,
         refreshToken, logout, handleUpdate, getUser, handleVerifyOTP, handleResendOTP,
         handleForgotPassword, handleResetPassword } from "../4controllers/authController.js";
 import { validRegister, registerRateLimit, registerRateLimitDaily, 
-         validLogin, loginRateLimit, verifyToken, validUpdate
+         validLogin, loginRateLimit, verifyToken, validUpdate, validResetPassword
 } from "../3middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -345,6 +345,6 @@ router.post('/forgot-password', handleForgotPassword);
  *       400:
  *         description: Sai mã OTP hoặc tài khoản không tồn tại
  */
-router.post('/reset-password', handleResetPassword);
+router.post('/reset-password', validResetPassword, handleResetPassword);
 
 export default router;
