@@ -9,6 +9,7 @@ import TodoPage from '../3pages/todo/todoPage';
 import ListView from '../3pages/todo/modules/ListView';
 import CalendarView from '../3pages/todo/modules/CalendarView';
 import StickyWallView from '../3pages/todo/modules/WallView';
+import MoodPage from '../3pages/moods/MoodPage';
 
 const AppRoutes = () => {
   return (
@@ -39,7 +40,7 @@ const AppRoutes = () => {
         path="/mood" 
         element={
           <PrivateRoute>
-             <div style={{padding: 50}}>Mood Tracker (Coming Soon)</div>
+             <MoodPage />
           </PrivateRoute>
         } 
       />
