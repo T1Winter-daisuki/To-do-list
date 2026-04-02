@@ -5,7 +5,7 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 
 const instance = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
-    timeout: 60000,
+    timeout: 8000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -29,6 +29,22 @@ instance.interceptors.response.use(
         return response.data; 
     },
     async (error) => {
+        // TIMEOUT
+        if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+            toast.error("Máy chủ không phản hồi. Vui lòng thử lại sau!", {
+                autoClose: 3000
+            });
+            return Promise.reject(error);
+        }
+
+        // Network Error
+        if (error.message === 'Network Error') {
+            toast.error("Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng!", {
+                autoClose: 3000
+            });
+            return Promise.reject(error);
+        }
+
         const originalRequest = error.config;
         if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
             originalRequest._retry = true;

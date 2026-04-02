@@ -32,7 +32,7 @@ const AvgMood = (avgScore) => {
 };
 
 const MoodPage = () => {
-    const [selectedYear, setSelectedYear] = useState(2026);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [moods, setMoods] = useState({});
     const [activeBrush, setActiveBrush] = useState('C');
     const [isDragging, setIsDragging] = useState(false);
@@ -113,7 +113,11 @@ const MoodPage = () => {
     };
 
     const stats = calculateStats();
-    const years = Array.from({ length: 7 }, (_, i) => 2026 + i);
+    const startYear = 2026;
+    const currentSystemYear = new Date().getFullYear();
+    const totalYears = (currentSystemYear - startYear) + 7; 
+
+    const years = Array.from({ length: totalYears }, (_, i) => startYear + i);
 
     return (
         <div className={styles.wrapper}>
