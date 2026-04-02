@@ -8,6 +8,7 @@ import swaggerSpec from './1_config/swagger.js';
 
 import authRoutes from '../src/2_auth/5routes/authRoutes.js';
 import taskRoutes from '../src/3_tasks/5routes/taskRoutes.js';
+import moodsRoutes from '../src/4_moods/5routes/moodsRoutes.js';
 
 const app = express();
 app.use(cookieParser());
@@ -31,6 +32,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/moods', moodsRoutes);
 
 app.get('/', (req, res) => {
     res.json({ 
