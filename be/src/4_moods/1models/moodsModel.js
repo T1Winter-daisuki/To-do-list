@@ -1,4 +1,4 @@
-import pool from '../../config/db.js';
+import pool from '../../1_config/db.js';
 
 export const getMoods = async (userId, year) => {
     const query = `

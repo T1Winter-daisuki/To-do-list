@@ -1,5 +1,5 @@
 import * as moodModel from "../1models/moodsModel.js";
-import pool from "../../config/db.js";
+import pool from "../../1_config/db.js";
 
 export const getMoods = async (user_id, year) => {
     const rows = await moodModel.getMoods(user_id, year);
