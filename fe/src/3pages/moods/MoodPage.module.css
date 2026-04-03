@@ -12,7 +12,10 @@
 /* 🌟 Căn giữa tiêu đề trên toàn bộ trang */
 .headerArea {
     width: 100%;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Khoảng cách giữa các thành phần */
     margin-bottom: 2vh;
 }
 
@@ -187,4 +190,32 @@
     color: #000;
     border: 1px solid #888;
     font-size: 1.6vh;
+}
+
+.saveBtn {
+    background-color: #e9c16a; /* Tone màu be phù hợp với theme */
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease-in-out;
+    font-family: inherit;
+}
+
+/* Hiệu ứng khi di chuột vào */
+.saveBtn:hover {
+    background-color: #b19d81; /* Đậm hơn 1 chút */
+    transform: translateY(-1px); /* Hơi nảy lên tạo cảm giác bấm */
+}
+
+/* Hiệu ứng khi nút bị khóa (đang lưu hoặc đang tải) */
+.saveBtn:disabled {
+    background-color: #807e7b; /* Chuyển màu xám mờ */
+    cursor: not-allowed; /* Đổi icon chuột thành dấu cấm */
+    transform: none;
+    box-shadow: none;
 }

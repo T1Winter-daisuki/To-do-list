@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { getMoods, saveMoods } from '../../1services/moodServices.js';
+import { toast } from 'react-toastify';
 import styles from './MoodPage.module.css';
 
 const MONTHS = [
@@ -36,6 +38,25 @@ const MoodPage = () => {
     const [moods, setMoods] = useState({});
     const [activeBrush, setActiveBrush] = useState('C');
     const [isDragging, setIsDragging] = useState(false);
+    const [isFetching, setIsFetching] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        const loadMoodsData = async () => {
+            setIsFetching(true);
+            try {
+                const res = await getMoods(selectedYear);
+                if (res.success)
+                    setMoods(res.data);
+            } catch (error) {
+                setMoods({}); // Trả về bảng trắng nếu lỗi
+            } finally {
+                setIsFetching(false);
+            }
+        };
+
+        loadMoodsData();
+    }, [selectedYear]);
 
     useEffect(() => {
         const handleMouseUp = () => setIsDragging(false);
@@ -49,6 +70,7 @@ const MoodPage = () => {
     };
 
     const paintCell = (day, monthIndex) => {
+        if (isFetching || isSaving) return; // Chặn tô màu khi đang load/save
         const key = `${monthIndex}-${day}`;
         setMoods(prev => {
             if (activeBrush !== 'ERASE' && prev[key] === activeBrush) return prev; 
@@ -72,6 +94,18 @@ const MoodPage = () => {
     const handleMouseEnter = (day, monthIndex) => {
         if (isDragging) {
             paintCell(day, monthIndex);
+        }
+    };
+
+    const handleSaveClick = async () => {
+        setIsSaving(true);
+        try {
+            const res = await saveMoods(selectedYear, moods);
+            if (res.success)
+                toast.success(res.message || "Đã cập nhật tâm trạng thành công!");
+        } catch (error) {
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -129,10 +163,19 @@ const MoodPage = () => {
                         setSelectedYear(Number(e.target.value));
                         setMoods({});
                     }}
+                    disabled={isFetching || isSaving} // Khóa khi đang tải/lưu
                 >
                     {years.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
                 <span className={styles.titleText}> MOOD TRACKER</span>
+
+                <button 
+                    className={styles.saveBtn} 
+                    onClick={handleSaveClick}
+                    disabled={isFetching || isSaving || Object.keys(moods).length === 0}
+                >
+                    {isSaving ? 'Đang lưu...' : 'Lưu lại'}
+                </button>
             </div>
 
             <div className={styles.contentArea}>
